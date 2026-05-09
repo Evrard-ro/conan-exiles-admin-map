@@ -1,25 +1,25 @@
-const sqlite = require('sqlite')
+const Database = require('better-sqlite3')
 const SmartBuffer = require('smart-buffer').SmartBuffer
 const queries = require('../../config/sql')
 
 class PetsController {
 
-  async getAll (req, res) {
+  getAll (req, res) {
     try {
-      const db = await sqlite.open(res.database.file, { mode: sqlite.OPEN_READONLY })
-      const data = await db.all(queries.pets)
+      const db = new Database(res.database.file, { readonly: true })
+      const data = db.prepare(queries.pets).all()
+      db.close()
 
-      data.map(async (pet) => {
+      data.forEach((pet) => {
         pet.name = getPetName(pet)
         pet.info = getPetInfo(pet)
         pet.owner = getPetOwnerId(pet)
         pet.greater = pet.info.indexOf('Greater') > -1
-        return pet
       })
 
       res.send({ data: data, update: res.database.time })
-      await db.close()
     } catch (e) {
+      console.error(e)
       res.send({ error: "There was an error while querying the database" })
     }
   }

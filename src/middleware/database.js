@@ -8,14 +8,13 @@ const databaseMiddleware = (app) => {
   app.set('database', database)
 
   app.use((req, res, next) => {
-    res.database = {
-      file: database,
-      time: (() => {
-        var update = statSync(database)
-        update = new Date(update.mtime).toLocaleString()
-        return update
-      })()
+    let time = null
+    try {
+      time = new Date(statSync(database).mtime).toLocaleString()
+    } catch (e) {
+      console.error('Cannot stat database file:', e.message)
     }
+    res.database = { file: database, time }
     next()
   })
 

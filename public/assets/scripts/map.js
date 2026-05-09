@@ -25,6 +25,15 @@ var colorhash = new ColorHash({
   saturation: [ 0.6, 0.8, 1 ]
 })
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return ''
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 function convertRange( value, r1, r2 ) {
   return (value - r1[0]) * (r2[1] - r2[0]) / (r1[1] - r1[0]) + r2[0]
 }
@@ -51,7 +60,7 @@ function init() {
   map.setMaxBounds(mapBounds)
   map.fitBounds(mapBounds)
 
-  layer = L.tileLayer('assets/tiles/{z}/{x}/{y}.png', {
+  var layer = L.tileLayer('assets/tiles/{z}/{x}/{y}.png', {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
     bounds: mapBounds,
@@ -88,7 +97,7 @@ function drawData (kind) {
     })
 
     data.data.forEach(function (marker, index) {
-      group = 'default'
+      var group = 'default'
       marker.stroke = 'black'
 
       if (marker.guild_name) {
@@ -151,7 +160,6 @@ function toggleFilter (kind) {
 }
 
 function showAll () {
-  dataset = {}
   $('.dropdown-item, .filters').removeClass('active')
   $('.show-all').addClass('active')
   drawData('all')
@@ -174,7 +182,6 @@ function createMarker(marker, group) {
   opt.teleport = 'TeleportPlayer ' + marker.x + ' ' + marker.y + ' ' + marker.z
 
   if (group && !markerLayers[group]) markerLayers[group] = L.layerGroup()
-  markerLayers['a'] = L.layerGroup()
 
   var point = L.circleMarker(toLatLng(marker.x, marker.y), opt)
     .bindTooltip(marker.tooltip, tooltipOptions)
@@ -227,7 +234,7 @@ function generateLegendTable (players) {
 
     tableContent += '<tr class="legend-list-item ' + disabled + '" data-legend="' + guilds[name].id + '" onClick="toggleLegend(\'' + guilds[name].id + '\')">'
     tableContent += '<td style="background-color: ' + guilds[name].color + '"></td>'
-    tableContent += '<td>' + name + '</td>'
+    tableContent += '<td>' + escapeHtml(name) + '</td>'
     tableContent += '</tr>'
   })
 
@@ -242,7 +249,7 @@ function generateLegendTable (players) {
     }
     tableContent += '<tr class="legend-list-item ' + disabled + '" data-legend="' + solos[name].id + '" onClick="toggleLegend(\'' + solos[name].id + '\')">'
     tableContent += '<td style="background-color: ' + solos[name].color + '"></td>'
-    tableContent += '<td>' + name + '</td>'
+    tableContent += '<td>' + escapeHtml(name) + '</td>'
     tableContent += '</tr>'
   })
 
@@ -278,11 +285,11 @@ function generatePlayerTable (players) {
     if (player.online == 1)
       bgcolor='#FFFFAA'
     tableContent += '<tr class="player-list-item" bgcolor="' + bgcolor +'">'
-    tableContent += '<td>' + player.char_name + '</td>'
-    tableContent += '<td>' + player.guild_name + '</td>'
-    tableContent += '<td>' + player.rank + '</td>'
-    tableContent += '<td>' + player.level + '</td>'
-    tableContent += '<td>' + player.last_online + '</td>'
+    tableContent += '<td>' + escapeHtml(player.char_name) + '</td>'
+    tableContent += '<td>' + escapeHtml(player.guild_name) + '</td>'
+    tableContent += '<td>' + escapeHtml(player.rank) + '</td>'
+    tableContent += '<td>' + escapeHtml(player.level) + '</td>'
+    tableContent += '<td>' + escapeHtml(player.last_online) + '</td>'
     tableContent += '</tr>'
   })
 

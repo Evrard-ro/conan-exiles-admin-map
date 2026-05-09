@@ -5,7 +5,7 @@ module.exports = {
     left outer join guilds as g on g.guildid = b.owner_id
     left outer join characters as c on c.id = b.owner_id
     where b.owner_id > 0
-    and ap.class like '%BP_PL_Altar%'
+    and (ap.class like '%BP_PL_Altar%'
     or ap.class like '%BP_PL_Bed_%'
     or ap.class like '%BP_PL_Bedroll_%'
     or ap.class like '%BP_PL_Chair_Throne%'
@@ -20,7 +20,7 @@ module.exports = {
     or ap.class like '%BP_PL_Water_Well%'
     or ap.class like '%BP_PL_WorkStation%'
     or ap.class like '%Trebuchet_V2%'
-    or ap.class like '%Pippi%'
+    or ap.class like '%Pippi%')
   `,
   altars: `
     select ap.class, ap.x, ap.y, ap.z, g.name as guild_name, g.guildid as guild_id, c.char_name, c.id as char_id, b.owner_id from buildings as b
@@ -44,8 +44,8 @@ module.exports = {
     left outer join guilds as g on g.guildid = b.owner_id
     left outer join characters as c on c.id = b.owner_id
     where b.owner_id > 0
-    and ap.class like '%BuildFoundation%'
-    or ap.class like '%BuildTriangleFoundation%'
+    and (ap.class like '%BuildFoundation%'
+    or ap.class like '%BuildTriangleFoundation%')
   `,
   beds: `
     select ap.class, ap.x, ap.y, ap.z, g.name as guild_name, g.guildid as guild_id, c.char_name, c.id as char_id, b.owner_id from buildings as b
@@ -53,8 +53,8 @@ module.exports = {
     left outer join guilds as g on g.guildid = b.owner_id
     left outer join characters as c on c.id = b.owner_id
     where b.owner_id > 0
-    and ap.class like '%BP_PL_Bedroll_%'
-    or ap.class like '%BP_PL_Bed_%'
+    and (ap.class like '%BP_PL_Bedroll_%'
+    or ap.class like '%BP_PL_Bed_%')
   `,
   campfires: `
     select ap.class, ap.x, ap.y, ap.z, g.name as guild_name, g.guildid as guild_id, c.char_name, c.id as char_id, b.owner_id from buildings as b
@@ -62,8 +62,8 @@ module.exports = {
     left outer join guilds as g on g.guildid = b.owner_id
     left outer join characters as c on c.id = b.owner_id
     where b.owner_id > 0
-    and ap.class like '%BP_PL_Crafting_CampFire%'
-    or ap.class like '%BP_PL_Crafting_Bonfire%'
+    and (ap.class like '%BP_PL_Crafting_CampFire%'
+    or ap.class like '%BP_PL_Crafting_Bonfire%')
   `,
   chests: `
     select ap.class, ap.x, ap.y, ap.z, g.name as guild_name, g.guildid as guild_id, c.char_name, c.id as char_id, b.owner_id from buildings as b

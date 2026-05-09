@@ -1,24 +1,25 @@
-const sqlite = require('sqlite')
+const Database = require('better-sqlite3')
 const SmartBuffer = require('smart-buffer').SmartBuffer
 
 const queries = require('../../../config/sql')
 
 class PippiThespiansController {
 
-  async getAll (req, res) {
+  getAll (req, res) {
     try {
-      const db = await sqlite.open(res.database.file, { mode: sqlite.OPEN_READONLY })
-      const data = await db.all(queries.pippiThespians)
+      const db = new Database(res.database.file, { readonly: true })
+      const data = db.prepare(queries.pippiThespians).all()
+      db.close()
 
-      data.map((pippi) => {
+      data.forEach((pippi) => {
         pippi.name = getPippiMobName(pippi)
         pippi.info = getPippiMobProfession(pippi)
         delete pippi.buffer
       })
 
       res.send({ data: data, update: res.database.time })
-      await db.close()
     } catch (e) {
+      console.error(e)
       res.send({ error: "There was an error while querying the database" })
     }
   }
