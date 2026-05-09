@@ -5,6 +5,8 @@
     <title>Conan Exiles Admin Map</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.3.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/map.css" />
@@ -19,42 +21,65 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item show-all active">
-            <a class="nav-link" onClick="showAll()" href="javascript:void(0);"><%= lang['ui.view_all'] %> <span class="sr-only">(current)</span></a>
-          </li>
           <li class="nav-item">
             <a class="nav-link" onClick="showPlayerList()" href="javascript:void(0);"><%= lang['ui.player_list'] %></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" onClick="showLegendList()" href="javascript:void(0);"><%= lang['ui.legend'] %></a>
           </li>
           <li class="nav-item dropdown filters">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <%= lang['ui.filters'] %>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item crafting-filter" onClick="toggleFilter('crafting')"><%= lang['ui.crafting'] %></a>
-              <a class="dropdown-item altars-filter" onClick="toggleFilter('altars')"><%= lang['ui.altars'] %></a>
-              <a class="dropdown-item thrones-filter" onClick="toggleFilter('thrones')"><%= lang['ui.thrones'] %></a>
-              <a class="dropdown-item animalpens-filter" onClick="toggleFilter('animalpens')"><%= lang['ui.animal_pens'] %></a>
-              <a class="dropdown-item beds-filter" onClick="toggleFilter('beds')"><%= lang['ui.beds'] %></a>
-              <a class="dropdown-item buildings-filter" onClick="toggleFilter('buildings')"><%= lang['ui.buildings'] %></a>
-              <a class="dropdown-item campfires-filter" onClick="toggleFilter('campfires')"><%= lang['ui.campfires'] %></a>
-              <a class="dropdown-item chests-filter" onClick="toggleFilter('chests')"><%= lang['ui.chests'] %></a>
-              <a class="dropdown-item maprooms-filter" onClick="toggleFilter('maprooms')"><%= lang['ui.map_rooms'] %></a>
-              <a class="dropdown-item trebuchets-filter" onClick="toggleFilter('trebuchets')"><%= lang['ui.trebuchets'] %></a>
-              <a class="dropdown-item vaults-filter" onClick="toggleFilter('vaults')"><%= lang['ui.vaults'] %></a>
-              <a class="dropdown-item waterwells-filter" onClick="toggleFilter('waterwells')"><%= lang['ui.water_wells'] %></a>
-              <a class="dropdown-item wheelsofpain-filter" onClick="toggleFilter('wheelsofpain')"><%= lang['ui.wheels_of_pain'] %></a>
+              <a class="dropdown-item" id="crafting-filter" onClick="toggleFilter('crafting')"><span class="check-icon"></span><%= lang['ui.crafting'] %></a>
+              <a class="dropdown-item" id="altars-filter" onClick="toggleFilter('altars')"><span class="check-icon"></span><%= lang['ui.altars'] %></a>
+              <a class="dropdown-item" id="thrones-filter" onClick="toggleFilter('thrones')"><span class="check-icon"></span><%= lang['ui.thrones'] %></a>
+              <a class="dropdown-item" id="animalpens-filter" onClick="toggleFilter('animalpens')"><span class="check-icon"></span><%= lang['ui.animal_pens'] %></a>
+              <a class="dropdown-item" id="beds-filter" onClick="toggleFilter('beds')"><span class="check-icon"></span><%= lang['ui.beds'] %></a>
+              <a class="dropdown-item" id="buildings-filter" onClick="toggleFilter('buildings')"><span class="check-icon"></span><%= lang['ui.buildings'] %></a>
+              <a class="dropdown-item" id="campfires-filter" onClick="toggleFilter('campfires')"><span class="check-icon"></span><%= lang['ui.campfires'] %></a>
+              <a class="dropdown-item" id="chests-filter" onClick="toggleFilter('chests')"><span class="check-icon"></span><%= lang['ui.chests'] %></a>
+              <a class="dropdown-item" id="maprooms-filter" onClick="toggleFilter('maprooms')"><span class="check-icon"></span><%= lang['ui.map_rooms'] %></a>
+              <a class="dropdown-item" id="trebuchets-filter" onClick="toggleFilter('trebuchets')"><span class="check-icon"></span><%= lang['ui.trebuchets'] %></a>
+              <a class="dropdown-item" id="vaults-filter" onClick="toggleFilter('vaults')"><span class="check-icon"></span><%= lang['ui.vaults'] %></a>
+              <a class="dropdown-item" id="waterwells-filter" onClick="toggleFilter('waterwells')"><span class="check-icon"></span><%= lang['ui.water_wells'] %></a>
+              <a class="dropdown-item" id="wheelsofpain-filter" onClick="toggleFilter('wheelsofpain')"><span class="check-icon"></span><%= lang['ui.wheels_of_pain'] %></a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item crabpots-filter" onClick="toggleFilter('crabpots')"><%= lang['ui.crab_pots'] %></a>
-              <a class="dropdown-item fishnets-filter" onClick="toggleFilter('fishnets')"><%= lang['ui.fish_nets'] %></a>
+              <a class="dropdown-item" id="crabpots-filter" onClick="toggleFilter('crabpots')"><span class="check-icon"></span><%= lang['ui.crab_pots'] %></a>
+              <a class="dropdown-item" id="fishnets-filter" onClick="toggleFilter('fishnets')"><span class="check-icon"></span><%= lang['ui.fish_nets'] %></a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item players-filter" onClick="toggleFilter('players')"><%= lang['ui.players'] %></a>
-              <a class="dropdown-item pets-filter" onClick="toggleFilter('pets')"><%= lang['ui.pets'] %></a>
+              <a class="dropdown-item" id="players-filter" onClick="toggleFilter('players')"><span class="check-icon"></span><%= lang['ui.players'] %></a>
+              <a class="dropdown-item" id="pets-filter" onClick="toggleFilter('pets')"><span class="check-icon"></span><%= lang['ui.pets'] %></a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item pippiall-filter" onClick="toggleFilter('pippi/all')"><%= lang['ui.pippi_all'] %></a>
-              <a class="dropdown-item pippi-filter" onClick="toggleFilter('pippi/thespians')"><%= lang['ui.pippi_thespians'] %></a>
+              <a class="dropdown-item" id="pippi_all-filter" onClick="toggleFilter('pippi/all')"><span class="check-icon"></span><%= lang['ui.pippi_all'] %></a>
+              <a class="dropdown-item" id="pippi_thespians-filter" onClick="toggleFilter('pippi/thespians')"><span class="check-icon"></span><%= lang['ui.pippi_thespians'] %></a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" id="reset-filters" onClick="resetFilters(); return false;"><%= lang['ui.reset_filters'] %></a>
+            </div>
+          </li>
+          <li class="nav-item dropdown clan-filter">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <%= lang['ui.clan_filter'] %>
+            </a>
+            <div class="dropdown-menu" id="clan-filter-menu">
+              <input type="text" id="clan-filter-search" class="form-control form-control-sm" placeholder="<%= lang['ui.search'] %>">
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item active" href="#" data-clan="all" onClick="selectClanFilter('all'); return false;"><%= lang['ui.all_clans'] %></a>
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <%= lang['ui.settings'] %>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right p-3" id="settings-menu" aria-labelledby="settingsDropdown">
+              <div class="form-group mb-2">
+                <label for="inactive-days" class="text-nowrap mb-1"><%= lang['ui.inactive_days'] %></label>
+                <input type="number" id="inactive-days" class="form-control form-control-sm" min="0" placeholder="<%= lang['ui.inactive_days_placeholder'] %>">
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="cluster-toggle">
+                <label class="form-check-label" for="cluster-toggle"><%= lang['ui.cluster_by_clan'] %></label>
+              </div>
             </div>
           </li>
         </ul>
@@ -76,13 +101,18 @@
             </button>
           </div>
           <div class="modal-body">
+            <div class="px-3 pt-2">
+              <input type="text" id="players-search" class="form-control form-control-sm" placeholder="<%= lang['ui.search'] %>">
+            </div>
             <table class="table table-responsive">
-              <thead>
-                <th><%= lang['ui.player'] %></th>
-                <th><%= lang['ui.guild'] %></th>
-                <th><%= lang['ui.rank'] %></th>
-                <th><%= lang['ui.level'] %></th>
-                <th><%= lang['ui.last_seen_online'] %></th>
+              <thead class="players-list-table-head">
+                <tr>
+                  <th class="sortable" data-sort-key="char_name"><%= lang['ui.player'] %></th>
+                  <th class="sortable" data-sort-key="guild_name"><%= lang['ui.guild'] %></th>
+                  <th class="sortable" data-sort-key="rank"><%= lang['ui.rank'] %></th>
+                  <th class="sortable" data-sort-key="level"><%= lang['ui.level'] %></th>
+                  <th class="sortable" data-sort-key="last_online"><%= lang['ui.last_seen_online'] %></th>
+                </tr>
               </thead>
               <tbody class="players-list-table">
               </tbody>
@@ -94,30 +124,9 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="legendList" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title"><%= lang['ui.legend'] %></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <table class="table table-hover">
-              <tbody class="legend-list-table">
-              </tbody>
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= lang['ui.close'] %></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <script src="assets/scripts/polyfills.js"></script>
     <script src="https://npmcdn.com/leaflet@1.3.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
