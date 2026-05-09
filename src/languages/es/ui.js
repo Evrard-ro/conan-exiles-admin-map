@@ -1,8 +1,7 @@
 export default {
   "filters": "Filtros",
-  "legend": "Leyenda",
   "player_list": "Lista de jugadores",
-  "view_all": "Ver todo",
+  "settings": "Configuración",
   "last_update": "Última actualización: ",
 
   "crafting": "Todas las estaciones de Crafteo",
@@ -33,10 +32,17 @@ export default {
   "level": "Nivel",
   "last_seen_online": "Última vez online",
 
-  "guilds": "Clanes",
-  "players_without_guild": "Jugadores sin clan",
-
   "teleport_copied": "¡TeleportPlayer copiado!",
+
+  "inactive_days": "Inactivos desde",
+  "inactive_days_placeholder": "días",
+  "cluster_by_clan": "Agrupar por clan",
+  "last_online": "Última conexión",
+
+  "reset_filters": "Restablecer filtros",
+  "clan_filter": "Filtro de clan",
+  "all_clans": "Todos los clanes",
+  "search": "Buscar",
 
   "close": "Cerrar"
 }

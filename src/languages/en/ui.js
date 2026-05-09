@@ -1,8 +1,7 @@
 export default {
   "filters": "Filters",
-  "legend": "Legend",
   "player_list": "Player list",
-  "view_all": "View all",
+  "settings": "Settings",
   "last_update": "Last update: ",
 
   "crafting": "All Crafting Placeables",
@@ -33,10 +32,17 @@ export default {
   "level": "Level",
   "last_seen_online": "Last seen online",
 
-  "guilds": "Guilds",
-  "players_without_guild": "Players without guild",
-
   "teleport_copied": "¡TeleportPlayer copied!",
+
+  "inactive_days": "Inactive since",
+  "inactive_days_placeholder": "days",
+  "cluster_by_clan": "Cluster by clan",
+  "last_online": "Last online",
+
+  "reset_filters": "Reset filters",
+  "clan_filter": "Clan filter",
+  "all_clans": "All clans",
+  "search": "Search",
 
   "close": "Close"
 }
