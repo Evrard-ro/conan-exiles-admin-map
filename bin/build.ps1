@@ -27,7 +27,7 @@ Rename-Item build\conan-exiles-admin-map-win.exe build\conan-exiles-admin-map.ex
 
 # Copy runtime files
 Copy-Item src\conan-exiles-admin-map.ini build\
-Copy-Item src\bindings\win_x64\node_sqlite3.node build\
+Copy-Item node_modules\better-sqlite3\build\Release\better_sqlite3.node build\
 
 # Remove intermediate lib
 Remove-Item -Recurse -Force lib

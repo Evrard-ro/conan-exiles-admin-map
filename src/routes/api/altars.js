@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const altars = new AltarsController()
 
-  app.get('/api/altars', async function (req, res) {
-    return await altars.getAll(req, res)
+  app.get('/api/altars', function (req, res) {
+    return altars.getAll(req, res)
   })
 
 }

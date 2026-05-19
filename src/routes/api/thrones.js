@@ -4,8 +4,8 @@ module.exports = (app) => {
 
     const thrones = new ThronesController()
 
-    app.get('/api/thrones', async function (req, res) {
-        return await thrones.getAll(req, res)
+    app.get('/api/thrones', function (req, res) {
+        return thrones.getAll(req, res)
     })
 
 }

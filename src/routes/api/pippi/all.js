@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const pippiAll = new PippiAllController()
 
-  app.get('/api/pippi/all', async function (req, res) {
-    return await pippiAll.getAll(req, res)
+  app.get('/api/pippi/all', function (req, res) {
+    return pippiAll.getAll(req, res)
   })
 
 }

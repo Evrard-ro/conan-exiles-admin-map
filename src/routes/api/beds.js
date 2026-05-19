@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const beds = new BedsController()
 
-  app.get('/api/beds', async function (req, res) {
-    return await beds.getAll(req, res)
+  app.get('/api/beds', function (req, res) {
+    return beds.getAll(req, res)
   })
 
 }

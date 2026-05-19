@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const waterwells = new WaterWellsController()
 
-  app.get('/api/waterwells', async function (req, res) {
-    return await waterwells.getAll(req, res)
+  app.get('/api/waterwells', function (req, res) {
+    return waterwells.getAll(req, res)
   })
 
 }

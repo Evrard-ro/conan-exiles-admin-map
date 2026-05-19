@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const buildings = new BuildingsController()
 
-  app.get('/api/buildings', async function (req, res) {
-    return await buildings.getAll(req, res)
+  app.get('/api/buildings', function (req, res) {
+    return buildings.getAll(req, res)
   })
 
 }

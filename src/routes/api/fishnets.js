@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const fishnets = new FishnetsController()
 
-  app.get('/api/fishnets', async function (req, res) {
-    return await fishnets.getAll(req, res)
+  app.get('/api/fishnets', function (req, res) {
+    return fishnets.getAll(req, res)
   })
 
 }

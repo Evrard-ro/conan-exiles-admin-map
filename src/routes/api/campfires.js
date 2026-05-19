@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const campfires = new CampfiresController()
 
-  app.get('/api/campfires', async function (req, res) {
-    return await campfires.getAll(req, res)
+  app.get('/api/campfires', function (req, res) {
+    return campfires.getAll(req, res)
   })
 
 }

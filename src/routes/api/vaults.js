@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const vaults = new VaultsController()
 
-  app.get('/api/vaults', async function (req, res) {
-    return await vaults.getAll(req, res)
+  app.get('/api/vaults', function (req, res) {
+    return vaults.getAll(req, res)
   })
 
 }

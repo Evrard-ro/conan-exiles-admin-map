@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const pets = new PetsController()
 
-  app.get('/api/pets', async function (req, res) {
-    return await pets.getAll(req, res)
+  app.get('/api/pets', function (req, res) {
+    return pets.getAll(req, res)
   })
 
 }

@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const wheelsOfPain = new WheelsOfPainController()
 
-  app.get('/api/wheelsofpain', async function (req, res) {
-    return await wheelsOfPain.getAll(req, res)
+  app.get('/api/wheelsofpain', function (req, res) {
+    return wheelsOfPain.getAll(req, res)
   })
 
 }

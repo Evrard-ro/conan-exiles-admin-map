@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const players = new PlayersController()
 
-  app.get('/api/players', async function (req, res) {
-    return await players.getAll(req, res)
+  app.get('/api/players', function (req, res) {
+    return players.getAll(req, res)
   })
 
 }

@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const animalpens = new AnimalPensController()
 
-  app.get('/api/animalpens', async function (req, res) {
-    return await animalpens.getAll(req, res)
+  app.get('/api/animalpens', function (req, res) {
+    return animalpens.getAll(req, res)
   })
 
 }

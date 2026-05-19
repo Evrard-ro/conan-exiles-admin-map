@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const all = new AllController()
 
-  app.get('/api/all', async function (req, res) {
-    return await all.getAll(req, res)
+  app.get('/api/all', function (req, res) {
+    return all.getAll(req, res)
   })
 
 }

@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const crafting = new CraftingController()
 
-  app.get('/api/crafting', async function (req, res) {
-    return await crafting.getAll(req, res)
+  app.get('/api/crafting', function (req, res) {
+    return crafting.getAll(req, res)
   })
 
 }

@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const maprooms = new MapRoomsController()
 
-  app.get('/api/maprooms', async function (req, res) {
-    return await maprooms.getAll(req, res)
+  app.get('/api/maprooms', function (req, res) {
+    return maprooms.getAll(req, res)
   })
 
 }

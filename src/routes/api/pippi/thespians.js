@@ -4,8 +4,8 @@ module.exports = (app) => {
 
   const pippiThespians = new PippiThespiansController()
 
-  app.get('/api/pippi/thespians', async function (req, res) {
-    return await pippiThespians.getAll(req, res)
+  app.get('/api/pippi/thespians', function (req, res) {
+    return pippiThespians.getAll(req, res)
   })
 
 }

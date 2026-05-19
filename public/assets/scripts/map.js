@@ -248,7 +248,7 @@ function drawData () {
   var lastUpdate = null
 
   kinds.forEach(function (kind) {
-    var url = kind.replace('_', '/')
+    var url = kind.replace(/_/g, '/')
     $.getJSON('api/' + url, function (data) {
       if (data.update) lastUpdate = data.update
       if (data.data) allMarkers = allMarkers.concat(data.data)
@@ -257,6 +257,9 @@ function drawData () {
         if (lastUpdate) $('.lastupdate').html(lastUpdate)
         renderMarkers(allMarkers)
       }
+    }).fail(function () {
+      remaining--
+      if (remaining === 0) renderMarkers(allMarkers)
     })
   })
 }
@@ -393,7 +396,7 @@ function renderPlayerTable () {
   var html = ''
   filtered.forEach(function (player) {
     var bgcolor = player.online == 1 ? '#FFFFAA' : '#FFFFFF'
-    html += '<tr class="player-list-item" bgcolor="' + bgcolor + '">'
+    html += '<tr class="player-list-item" style="background-color:' + bgcolor + '">'
     html += '<td>' + escapeHtml(player.char_name) + '</td>'
     html += '<td>' + escapeHtml(player.guild_name) + '</td>'
     html += '<td>' + escapeHtml(player.rank) + '</td>'
