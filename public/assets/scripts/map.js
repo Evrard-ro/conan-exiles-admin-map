@@ -105,14 +105,10 @@ function init() {
     redrawAll()
   })
 
-  // Keep Filters dropdown open when selecting categories (close only on Reset)
-  $('.filters .dropdown-menu').on('click', '.dropdown-item:not(#reset-filters)', function (e) {
-    e.stopPropagation()
-  })
-
-  // Keep Settings dropdown open when interacting with inputs
-  $('#settings-menu').on('click', function (e) {
-    e.stopPropagation()
+  // Filter item clicks
+  $(document).on('click', '.filter-item', function () {
+    var kind = $(this).attr('id').replace(/-filter$/, '')
+    toggleFilter(kind)
   })
 
   // Keep dropdown open when interacting with search inside it
@@ -518,7 +514,7 @@ function rebuildClanFilterMenu () {
   // If the selected clan no longer exists in the current data, reset to 'all'
   if (clanFilter !== 'all' && !currentGroups[clanFilter]) {
     clanFilter = 'all'
-    menu.find('.dropdown-item').removeClass('active')
+    menu.find('.clan-item').removeClass('active')
     menu.find('[data-clan="all"]').addClass('active')
   }
 
@@ -527,7 +523,7 @@ function rebuildClanFilterMenu () {
     var color = groupColors[id] || '#666'
     var isActive = clanFilter === id
     var item = $('<a>')
-      .addClass('dropdown-item clan-item' + (isActive ? ' active' : ''))
+      .addClass('clan-item' + (isActive ? ' active' : ''))
       .attr('href', '#')
       .attr('data-clan', id)
       .html('<span class="clan-dot" style="background:' + escapeHtml(color) + '"></span>' + escapeHtml(name))
