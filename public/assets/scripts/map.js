@@ -312,14 +312,14 @@ function toggleFilter (kind) {
   // Auto-fallback to View all when all checkboxes unchecked
   if (Object.keys(activeKinds).length === 0) {
     activeKinds = { 'all': true }
-    $('.filters .dropdown-item').removeClass('active')
+    $('.filter-item').removeClass('active')
   }
   drawData()
 }
 
 function showAll () {
   activeKinds = { 'all': true }
-  $('.filters .dropdown-item').removeClass('active')
+  $('.filter-item').removeClass('active')
   drawData()
 }
 
@@ -328,11 +328,11 @@ function resetFilters () {
   clanFilter = 'all'
   inactiveDays = 0
   clusterEnabled = false
-  $('.filters .dropdown-item').removeClass('active')
+  $('.filter-item').removeClass('active')
   $('#inactive-days').val('')
   $('#cluster-toggle').prop('checked', false)
   $('#clan-filter-search').val('')
-  $('#clan-filter-menu .dropdown-item').removeClass('active')
+  $('#clan-filter-menu .clan-item').removeClass('active')
   $('#clan-filter-menu [data-clan="all"]').addClass('active')
   drawData()
 }
@@ -542,8 +542,8 @@ function rebuildClanFilterMenu () {
 
 function selectClanFilter (id) {
   clanFilter = id
-  $('#clan-filter-menu .dropdown-item').removeClass('active')
-  $('#clan-filter-menu .dropdown-item').each(function () {
+  $('#clan-filter-menu .clan-item').removeClass('active')
+  $('#clan-filter-menu .clan-item').each(function () {
     if ($(this).attr('data-clan') === id) $(this).addClass('active')
   })
   applyClanFilter()
