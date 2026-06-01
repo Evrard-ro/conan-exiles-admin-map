@@ -77,6 +77,24 @@ function init() {
     tms: false
   }).addTo(map)
 
+  // Sidebar panel toggles
+  $('.sb-btn[data-panel]').on('click', function () {
+    var name = $(this).data('panel')
+    if (name === 'players') {
+      showPlayerList()
+    } else {
+      openPanel(name)
+    }
+  })
+
+  $(document).on('click', '.panel-close', function () {
+    closePanel()
+  })
+
+  $('#map').on('click', function () {
+    closePanel()
+  })
+
   $('#inactive-days').on('input', function () {
     inactiveDays = parseInt($(this).val(), 10) || 0
     redrawAll()
@@ -348,13 +366,29 @@ function createMarker(marker, group) {
   point.addTo(map)
 }
 
+function openPanel (name) {
+  var $btn = $('.sb-btn[data-panel="' + name + '"]')
+  if ($btn.hasClass('active')) {
+    closePanel()
+    return
+  }
+  closePanel()
+  $('#panel-' + name).addClass('open')
+  $btn.addClass('active')
+}
+
+function closePanel () {
+  $('.overlay-panel').removeClass('open')
+  $('.sb-btn').removeClass('active')
+}
+
 function showPlayerList () {
   $.getJSON('api/players', function (data) {
     playersData = data.data
     playersSearch = ''
     $('#players-search').val('')
     renderPlayerTable()
-    $('#playersList').modal()
+    openPanel('players')
   })
 }
 
