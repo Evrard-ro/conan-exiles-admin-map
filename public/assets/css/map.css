@@ -1,132 +1,306 @@
-html, body, #map { width:100%; height:100%; margin:0; padding:0; z-index: 1; background-color: black }
-#slider{ position: absolute; top: 10px; right: 10px; z-index: 5; }
-.leaflet-tooltip { background-color: #000; border-color: #000; color: #fff; transition: .2s opacity; opacity: 0; text-align: center; font-size: 14px }
-.leaflet-tooltip:before { border-top-color: #000; }
-
-@media (min-width: 576px) {
-  #playersList .modal-dialog {
-    max-width: 900px;
-  }
+/* ── Tokens ── */
+:root {
+  --bg-deep:    #0a0806;
+  --bg-sidebar: #110a03;
+  --bg-panel:   rgba(17, 10, 3, 0.94);
+  --border:     #4a2e10;
+  --border-dim: #2a1a08;
+  --accent:     #c8860a;
+  --accent-dim: #7a5a2a;
+  --text:       #d4b896;
+  --text-dim:   #7a5a2a;
+  --text-muted: #4a3a1a;
 }
 
-#playersList .modal-body {
-  padding: 0
-}
-#playersList .table {
-  width: 100%;
-}
-#playersList .table th:nth-child(1) {
-  width: 30%;
-}
-#playersList .table th:nth-child(2) {
-  width: 25%;
-}
-#playersList .table th:nth-child(3) {
-  width: 10%;
-}
-#playersList .table th:nth-child(4) {
-  width: 10%;
-}
-#playersList .table th:nth-child(5) {
-  width: 25%;
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%; margin: 0; padding: 0;
+  background: var(--bg-deep);
+  font-family: 'Crimson Text', Georgia, serif;
+  color: var(--text);
+  overflow: hidden;
 }
 
-.cluster-icon {
-  border-radius: 50%;
-  color: #fff;
-  font-weight: bold;
-  text-align: center;
-  border: 2px solid rgba(255,255,255,0.8);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+/* ── App shell ── */
+#app { display: flex; width: 100vw; height: 100vh; }
+
+/* ── Map container ── */
+#map-container { flex: 1; position: relative; overflow: hidden; }
+
+#map { position: absolute; inset: 0; background: var(--bg-deep); z-index: 1; }
+
+/* ── Sidebar ── */
+#sidebar {
+  width: 52px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  z-index: 200;
+}
+
+.sidebar-logo {
+  font-size: 20px;
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(200, 134, 10, 0.5);
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.sidebar-divider { width: 28px; height: 1px; background: var(--border-dim); margin: 6px 0; }
+
+.sidebar-nav { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
+
+.sidebar-spacer { flex: 1; }
+
+.sb-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  position: relative;
+}
+
+.sb-btn:hover { background: #1a0d04; border-color: var(--border); color: var(--accent-dim); }
+
+.sb-btn.active {
+  background: #1f1005;
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 8px rgba(200, 134, 10, 0.2);
+}
+
+/* Sidebar tooltips (CSS-only) */
+.sb-btn::after {
+  content: attr(title);
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(17, 10, 3, 0.97);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 10px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 300;
+}
+.sb-btn:hover::after { opacity: 1; }
+
+/* ── Overlay panels ── */
+.overlay-panel {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 220px;
+  background: var(--bg-panel);
+  backdrop-filter: blur(8px);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.22s ease;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.overlay-panel.open { transform: translateX(0); }
+
+.overlay-panel--wide { width: 380px; }
+
+.panel-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.cluster-tooltip table { font-size: 12px; border-collapse: collapse; }
-.cluster-tooltip td, .cluster-tooltip th { padding: 2px 8px; }
-.cluster-tooltip th { font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.4); }
-
-.dropdown-item {
-  cursor: pointer;
-}
-.dropdown-item.active,
-.dropdown-item:hover,
-.dropdown-item:active {
-  background-color: blue;
-  color: white !important;
-}
-
-/* Check icon for multi-select filters */
-.dropdown-item .check-icon {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 1px solid #aaa;
-  border-radius: 2px;
-  margin-right: 6px;
-  vertical-align: middle;
-  position: relative;
+  justify-content: space-between;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--border-dim);
   flex-shrink: 0;
 }
-.dropdown-item.active .check-icon::after {
-  content: '✓';
-  position: absolute;
-  top: -3px;
-  left: 1px;
-  font-size: 12px;
-  color: white;
-  font-weight: bold;
+
+.panel-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
-/* Clan filter dropdown */
-.clan-filter .dropdown-menu {
-  max-height: 420px;
-  overflow-y: auto;
-  min-width: 220px;
+.panel-close {
+  background: none; border: none;
+  color: var(--text-muted); font-size: 14px; cursor: pointer;
+  padding: 0; line-height: 1; transition: color 0.15s;
 }
-#clan-filter-search {
-  margin: 4px 8px 2px;
-  width: calc(100% - 16px);
+.panel-close:hover { color: var(--accent-dim); }
+
+.panel-body { flex: 1; overflow-y: auto; padding: 12px 14px; }
+.panel-body::-webkit-scrollbar { width: 4px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 2px; }
+
+/* ── Filters ── */
+.filter-group { margin-bottom: 14px; }
+
+.filter-group-label {
+  font-family: monospace;
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 6px;
 }
+
+.filter-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 3px 2px; cursor: pointer;
+}
+.filter-item:hover .filter-text { color: var(--text); }
+
+.filter-check {
+  width: 10px; height: 10px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 7px; color: transparent;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+.filter-item.active .filter-check {
+  border-color: var(--accent);
+  background: rgba(200, 134, 10, 0.15);
+  color: var(--accent);
+}
+
+.filter-text {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 13px; color: var(--text-dim); transition: color 0.15s;
+}
+.filter-item.active .filter-text { color: var(--text); }
+
+.reset-btn {
+  display: block; width: 100%; margin-top: 10px; padding: 6px;
+  background: transparent; border: 1px solid var(--border-dim); border-radius: 3px;
+  color: var(--text-muted);
+  font-family: 'Cinzel', Georgia, serif; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.reset-btn:hover { border-color: var(--border); color: var(--text-dim); }
+
+/* ── Clans ── */
+.clan-search, .players-search, .settings-input {
+  width: 100%;
+  background: #0f0905; border: 1px solid var(--border-dim); border-radius: 3px;
+  padding: 5px 8px;
+  font-family: 'Crimson Text', Georgia, serif; font-size: 13px; color: var(--text);
+  outline: none; margin-bottom: 8px;
+}
+.clan-search:focus, .players-search:focus, .settings-input:focus { border-color: var(--border); }
+
+.clan-divider { height: 1px; background: var(--border-dim); margin: 4px 0 6px; }
+
+.clan-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 4px 2px; cursor: pointer;
+  font-family: 'Crimson Text', Georgia, serif; font-size: 13px;
+  color: var(--text-dim); text-decoration: none; border-radius: 2px;
+  transition: color 0.15s;
+}
+.clan-item:hover { color: var(--text); }
+.clan-item.active { color: var(--accent); }
+
 .clan-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 6px;
-  vertical-align: middle;
-  border: 1px solid rgba(0,0,0,0.2);
-  flex-shrink: 0;
+  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0; border: 1px solid rgba(0,0,0,0.2);
 }
 
-/* Player list search */
-#players-search {
-  margin-bottom: 8px;
+/* ── Players ── */
+.players-search { margin-bottom: 10px; }
+
+.players-table { width: 100%; border-collapse: collapse; }
+
+.players-list-table-head th {
+  font-family: monospace; font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-muted);
+  padding: 0 4px 6px; text-align: left;
+  border-bottom: 1px solid var(--border-dim);
 }
 
-/* Settings dropdown */
-#settings-menu {
-  min-width: 230px;
-}
-#settings-menu .form-check-label {
-  color: inherit;
+.players-list-table tr { border-bottom: 1px solid rgba(42, 26, 8, 0.5); }
+.players-list-table tr:nth-child(even) { background: rgba(200, 134, 10, 0.03); }
+.players-list-table td { font-family: 'Crimson Text', Georgia, serif; font-size: 13px; color: var(--text-dim); padding: 3px 4px; }
+.players-list-table td:first-child { color: var(--text); }
+
+.player-online-row td { background: rgba(200, 134, 10, 0.06); }
+.player-online-row td:first-child { color: var(--accent); }
+
+.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+.sortable:hover { color: var(--text-dim); text-decoration: underline; }
+.sortable.sort-asc::after { content: ' ▲'; font-size: 8px; }
+.sortable.sort-desc::after { content: ' ▼'; font-size: 8px; }
+
+/* ── Settings ── */
+.settings-group { margin-bottom: 14px; }
+
+.settings-label {
+  display: block;
+  font-family: 'Cinzel', Georgia, serif; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 5px;
 }
 
-/* Sortable table headers */
-.sortable {
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
+.settings-check-label {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  font-family: 'Crimson Text', Georgia, serif; font-size: 13px; color: var(--text-dim);
 }
-.sortable:hover {
-  text-decoration: underline;
+.settings-check-label input[type="checkbox"] {
+  appearance: none; width: 14px; height: 14px;
+  border: 1px solid var(--border); border-radius: 2px; background: transparent;
+  cursor: pointer; flex-shrink: 0; position: relative;
 }
-.sortable.sort-asc::after {
-  content: ' ▲';
-  font-size: 10px;
+.settings-check-label input[type="checkbox"]:checked {
+  border-color: var(--accent); background: rgba(200, 134, 10, 0.15);
 }
-.sortable.sort-desc::after {
-  content: ' ▼';
-  font-size: 10px;
+.settings-check-label input[type="checkbox"]:checked::after {
+  content: '✓'; position: absolute; top: -2px; left: 1px;
+  font-size: 11px; color: var(--accent);
 }
+
+/* ── Status bar ── */
+#status-bar {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+  background: rgba(10, 6, 2, 0.82); border: 1px solid var(--border-dim);
+  border-radius: 20px; padding: 4px 16px;
+  font-family: 'Crimson Text', Georgia, serif; font-size: 12px;
+  color: var(--text-muted); letter-spacing: 0.5px; white-space: nowrap;
+  backdrop-filter: blur(6px); z-index: 50; pointer-events: none;
+}
+
+/* ── Leaflet overrides ── */
+.leaflet-tooltip {
+  background: rgba(15, 8, 2, 0.95); border: 1px solid var(--border);
+  color: var(--text); font-family: 'Crimson Text', Georgia, serif; font-size: 13px;
+  border-radius: 3px; transition: opacity 0.2s; opacity: 0; text-align: center;
+}
+.leaflet-tooltip::before { border-top-color: var(--border); }
+
+.cluster-icon {
+  border-radius: 50%; color: var(--accent);
+  font-family: 'Cinzel', Georgia, serif; font-weight: bold; text-align: center;
+  border: 2px solid var(--accent); background: var(--bg-sidebar);
+  box-shadow: 0 0 10px rgba(200, 134, 10, 0.3);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.cluster-tooltip table { font-size: 12px; border-collapse: collapse; font-family: 'Crimson Text', serif; }
+.cluster-tooltip td, .cluster-tooltip th { padding: 2px 8px; }
+.cluster-tooltip th { font-weight: bold; border-bottom: 1px solid rgba(200,134,10,0.3); }
