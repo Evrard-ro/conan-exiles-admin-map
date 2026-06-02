@@ -193,17 +193,6 @@ function init() {
     }
   })
 
-  $(document).on('keydown', function (e) {
-    if (e.ctrlKey && e.key === 'f') {
-      e.preventDefault()
-      openPanel('search')
-      setTimeout(function () { $('#search-input').focus() }, 50)
-    }
-    if (e.key === 'Escape') {
-      closePanel()
-    }
-  })
-
   map.on('mousemove', function (e) {
     if ($('#coord-debug').is(':visible')) {
       var c = fromLatLng(e.latlng.lat, e.latlng.lng)
@@ -211,11 +200,19 @@ function init() {
     }
   })
 
-  $(document).on('keydown', function (e) {
-    if (e.shiftKey && e.key === 'C') {
+  window.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.code === 'KeyF' || e.key === 'f' || e.key === 'F')) {
+      e.preventDefault()
+      openPanel('search')
+      setTimeout(function () { $('#search-input').focus() }, 50)
+    }
+    if (e.key === 'Escape') {
+      closePanel()
+    }
+    if (e.shiftKey && e.code === 'KeyC') {
       $('#coord-debug').toggle()
     }
-  })
+  }, true)
 
   getPlayers()
   showAll()
