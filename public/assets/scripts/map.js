@@ -216,10 +216,18 @@ function clearAllLayers () {
   groupColors = {}
 }
 
+function isOnActiveMap(x) {
+  var cfg = mapConfigs[activeMap]
+  if (cfg.xMax !== undefined && x >= cfg.xMax) return false
+  if (cfg.xMin !== undefined && x <= cfg.xMin) return false
+  return true
+}
+
 function renderMarkers (markers) {
   clearAllLayers()
 
   markers.forEach(function (marker) {
+    if (!isOnActiveMap(marker.x)) return
     if (!isOwnerInactive(marker)) return
 
     var group = 'default'
