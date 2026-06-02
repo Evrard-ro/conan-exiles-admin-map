@@ -7,8 +7,25 @@ var groupColors = {}
 var map
 var mapMinZoom = 2
 var mapMaxZoom = 6
-var rangeX = [ -296000, 412000 ]
-var rangeY = [ -292000, 353500 ]
+var mapConfigs = {
+  exiledlands: {
+    label: 'Exiled Lands',
+    rangeX: [-296000, 412000],
+    rangeY: [-292000, 353500],
+    tiles: 'assets/tiles/{z}/{x}/{y}.png',
+    xMax: 800000
+  },
+  siptah: {
+    label: 'Isle of Siptah',
+    rangeX: [1234655, 1884492],
+    rangeY: [-354417, 325164],
+    tiles: 'assets/tiles-siptah/{z}/{x}/{y}.png',
+    xMin: 800000
+  }
+}
+var activeMap = 'exiledlands'
+var tileLayer = null
+var mapBounds = null
 var boundsX = [ 14.4, 230.7 ]
 var boundsY = [ -47.7, -245.3 ]
 var activeKinds = {}
@@ -49,7 +66,8 @@ function convertRange( value, r1, r2 ) {
 }
 
 function toLatLng(x, y) {
-  return [ convertRange(y, rangeY, boundsY), convertRange(x, rangeX, boundsX) ]
+  var cfg = mapConfigs[activeMap]
+  return [ convertRange(y, cfg.rangeY, boundsY), convertRange(x, cfg.rangeX, boundsX) ]
 }
 
 function init() {
