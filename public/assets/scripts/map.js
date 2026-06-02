@@ -73,6 +73,14 @@ function toLatLng(x, y) {
   return [ convertRange(y, cfg.rangeY, boundsY), convertRange(x, cfg.rangeX, boundsX) ]
 }
 
+function fromLatLng(lat, lng) {
+  var cfg = mapConfigs[activeMap]
+  return {
+    x: Math.round(convertRange(lng, boundsX, cfg.rangeX)),
+    y: Math.round(convertRange(lat, boundsY, cfg.rangeY))
+  }
+}
+
 function init() {
   map = L.map('map', {
     maxZoom: mapMaxZoom,
@@ -193,6 +201,19 @@ function init() {
     }
     if (e.key === 'Escape') {
       closePanel()
+    }
+  })
+
+  map.on('mousemove', function (e) {
+    if ($('#coord-debug').is(':visible')) {
+      var c = fromLatLng(e.latlng.lat, e.latlng.lng)
+      $('#coord-text').text('TeleportPlayer ' + c.x + ' ' + c.y + ' 0')
+    }
+  })
+
+  $(document).on('keydown', function (e) {
+    if (e.shiftKey && e.key === 'C') {
+      $('#coord-debug').toggle()
     }
   })
 
