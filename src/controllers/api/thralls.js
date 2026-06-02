@@ -1,19 +1,18 @@
 const Database = require('better-sqlite3')
 const queries = require('../../config/sql')
 
-class PetsController {
+class ThrallsController {
 
   getAll (req, res) {
     try {
       const db = new Database(res.database.file, { readonly: true })
-      const data = db.prepare(queries.pets).all()
+      const data = db.prepare(queries.thralls).all()
       db.close()
 
-      data.forEach((pet) => {
-        pet.name = getPetName(pet)
-        pet.info = getPetInfo(pet)
-        pet.owner = getPetOwnerId(pet)
-        pet.greater = /[Aa]lpha[Pp]et|[Pp]et[Aa]lpha/i.test(pet.class || '')
+      data.forEach((thrall) => {
+        thrall.name = getThrallName(thrall)
+        thrall.info = getThrallInfo(thrall)
+        thrall.owner = getThrallOwnerId(thrall)
       })
 
       res.send({ data: data, update: res.database.time })
@@ -26,9 +25,9 @@ class PetsController {
 }
 
 // UE4 FString at offset 41: int32 LE length (negative = UTF-16LE, positive = ASCII/UTF-8)
-function getPetName (pet) {
-  if (!pet.name) return 'Unknown'
-  const buf = Buffer.isBuffer(pet.name) ? pet.name : Buffer.from(pet.name)
+function getThrallName (thrall) {
+  if (!thrall.name) return 'Unknown'
+  const buf = Buffer.isBuffer(thrall.name) ? thrall.name : Buffer.from(thrall.name)
   if (buf.length < 46) return 'Unknown'
 
   const strLen = buf.readInt32LE(41)
@@ -50,27 +49,27 @@ function getPetName (pet) {
   return 'Unknown'
 }
 
-// UE4 FString at offset 16: int32 LE string length (always positive ASCII in current format)
-// String data starts at offset 20, format: "Pet_Tiger" or "pet_Whitetiger"
-function getPetInfo (pet) {
-  if (!pet.info) return ''
-  const buf = Buffer.isBuffer(pet.info) ? pet.info : Buffer.from(pet.info)
+// UE4 FString at offset 16: int32 LE string length (always positive ASCII)
+// String data starts at offset 20, format: "Faction_Role_Tier_Race"
+function getThrallInfo (thrall) {
+  if (!thrall.info) return ''
+  const buf = Buffer.isBuffer(thrall.info) ? thrall.info : Buffer.from(thrall.info)
   if (buf.length < 20) return ''
 
   const strLen = buf.readInt32LE(16)
-  if (strLen <= 0 || strLen > 100) return ''
+  if (strLen <= 0 || strLen > 200) return ''
 
   const end = 20 + strLen - 1
   if (end > buf.length) return ''
 
-  return buf.slice(20, end).toString('ascii').replace(/^[Pp]et_/i, '').replace(/_/g, ' ')
+  return buf.slice(20, end).toString('ascii').replace(/_/g, ' ')
 }
 
-function getPetOwnerId (pet) {
-  if (!pet.owner) return 0
-  const buf = Buffer.isBuffer(pet.owner) ? pet.owner : Buffer.from(pet.owner)
+function getThrallOwnerId (thrall) {
+  if (!thrall.owner) return 0
+  const buf = Buffer.isBuffer(thrall.owner) ? thrall.owner : Buffer.from(thrall.owner)
   if (buf.length < 8) return 0
   return buf.readUInt32LE(buf.length - 8)
 }
 
-module.exports = PetsController
+module.exports = ThrallsController
