@@ -97,7 +97,7 @@ function init() {
   )
 
   map.setMaxBounds(mapBounds)
-  map.fitBounds(mapBounds)
+  map.setView(mapBounds.getCenter(), 2)
 
   tileLayer = L.tileLayer(mapConfigs[activeMap].tiles, {
     minZoom: mapMinZoom,
@@ -105,7 +105,10 @@ function init() {
     minNativeZoom: mapMaxZoom,
     maxNativeZoom: mapMaxZoom,
     bounds: mapBounds,
-    tms: false
+    tms: false,
+    updateWhenIdle: true,
+    keepBuffer: 0,
+    updateWhenZooming: false
   }).addTo(map)
 
   // Sidebar panel toggles
@@ -231,10 +234,13 @@ function switchMap(name) {
     minNativeZoom: mapMaxZoom,
     maxNativeZoom: mapMaxZoom,
     bounds: mapBounds,
-    tms: false
+    tms: false,
+    updateWhenIdle: true,
+    keepBuffer: 0,
+    updateWhenZooming: false
   }).addTo(map)
 
-  map.fitBounds(mapBounds)
+  map.setView(mapBounds.getCenter(), 2)
   drawData()
 
   $('.map-btn').removeClass('active')
