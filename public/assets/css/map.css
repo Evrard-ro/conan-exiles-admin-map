@@ -322,3 +322,225 @@ html, body {
 .cluster-tooltip table { font-size: 12px; border-collapse: collapse; font-family: 'Crimson Text', serif; }
 .cluster-tooltip td, .cluster-tooltip th { padding: 2px 8px; }
 .cluster-tooltip th { font-weight: bold; border-bottom: 1px solid rgba(200,134,10,0.3); }
+
+/* ── Badges (shared: tooltip + search results) ── */
+.badge {
+  display: inline-block;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.badge-t4    { background: rgba(180,50,10,0.25);  border: 1px solid rgba(220,70,20,0.55);  color: #e07040; }
+.badge-t3    { background: rgba(180,130,10,0.2);  border: 1px solid rgba(200,150,20,0.45); color: #c8a040; }
+.badge-t2    { background: rgba(100,120,60,0.2);  border: 1px solid rgba(130,160,70,0.4);  color: #90b060; }
+.badge-t1    { background: rgba(80,80,80,0.2);    border: 1px solid rgba(120,120,120,0.4); color: #909090; }
+.badge-alpha  { background: rgba(150,40,180,0.2); border: 1px solid rgba(180,60,220,0.45); color: #c060e0; }
+.badge-online { background: rgba(30,160,80,0.2);  border: 1px solid rgba(50,200,100,0.45); color: #50d080; }
+
+/* ── Tooltip structure ── */
+.tip-header {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  color: #c8860a;
+  letter-spacing: 0.05em;
+  padding-bottom: 5px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(200,134,10,0.28);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.tip-row { display: flex; gap: 8px; align-items: baseline; margin-bottom: 1px; }
+.tip-lbl {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: #6a5030;
+  text-transform: uppercase;
+  min-width: 66px;
+  flex-shrink: 0;
+}
+.tip-val { color: #d4b896; }
+.tip-val-dim { color: #6a5030; font-style: italic; }
+.tip-sep { height: 1px; background: rgba(200,134,10,0.14); margin: 5px 0; }
+.tip-tele {
+  font-size: 0.7rem;
+  color: #4a3818;
+  padding-top: 4px;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.04em;
+}
+
+/* ── Filter panel count badges ── */
+.filter-count {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: #5a4020;
+  background: rgba(200,134,10,0.08);
+  border: 1px solid rgba(200,134,10,0.15);
+  border-radius: 2px;
+  padding: 0 5px;
+  line-height: 1.7;
+  margin-left: auto;
+  min-width: 18px;
+  text-align: center;
+}
+.filter-item.active .filter-count {
+  color: #9a7040;
+  border-color: rgba(200,134,10,0.3);
+}
+
+/* ── Clan panel: sort row ── */
+.clan-sort-row { display: flex; gap: 5px; margin-bottom: 6px; }
+.clan-sort-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.07em;
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid rgba(200,134,10,0.2);
+  color: #7a6040;
+  background: transparent;
+  cursor: pointer;
+}
+.clan-sort-btn.active {
+  border-color: rgba(200,134,10,0.55);
+  color: #c8a060;
+  background: rgba(200,134,10,0.08);
+}
+
+/* ── Clan panel: expanded item ── */
+.clan-item-expanded {
+  padding: 5px 0 4px;
+  border-bottom: 1px solid rgba(200,134,10,0.07);
+  cursor: pointer;
+}
+.clan-item-expanded:hover .clan-exp-name { color: #d4b896; }
+.clan-item-expanded.active .clan-exp-name { color: #c8860a; }
+.clan-exp-top { display: flex; align-items: center; gap: 7px; }
+.clan-exp-name {
+  font-family: 'Crimson Text', serif;
+  font-size: 0.9rem;
+  color: #9a7a4a;
+  flex: 1;
+}
+.clan-exp-sub {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-left: 16px;
+  margin-top: 1px;
+}
+.clan-act-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.clan-act-dot.green  { background: #40c060; box-shadow: 0 0 3px rgba(60,180,80,0.5); }
+.clan-act-dot.yellow { background: #c0a020; }
+.clan-act-dot.grey   { background: #505050; }
+.clan-act-label { font-family: 'Crimson Text', serif; font-size: 0.75rem; }
+.clan-act-label.green  { color: #40b060; }
+.clan-act-label.yellow { color: #a09020; }
+.clan-act-label.grey   { color: #505050; }
+.clan-count-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: #6a5030;
+  background: rgba(200,134,10,0.1);
+  border: 1px solid rgba(200,134,10,0.18);
+  border-radius: 2px;
+  padding: 0 5px;
+  line-height: 1.6;
+}
+.clan-item-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: #7a6040;
+  cursor: pointer;
+  text-decoration: none;
+}
+.clan-item-all:hover { color: #c8a060; }
+.clan-item-all.active { color: #c8860a; }
+
+/* ── Search panel ── */
+.overlay-panel--search { width: 340px; }
+.search-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(200,134,10,0.15);
+  flex-shrink: 0;
+}
+.search-icon { color: #7a5828; font-size: 0.95rem; flex-shrink: 0; }
+#search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Crimson Text', serif;
+  font-size: 0.95rem;
+  color: #d4b896;
+  caret-color: #c8860a;
+}
+#search-input::placeholder { color: #4a3818; }
+.search-hint {
+  font-size: 0.7rem;
+  color: #4a3818;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+#search-results { overflow-y: auto; flex: 1; }
+.search-group-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  color: #5a4020;
+  text-transform: uppercase;
+  padding: 7px 14px 3px;
+  background: rgba(0,0,0,0.2);
+}
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  border-bottom: 1px solid rgba(200,134,10,0.07);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.search-result:hover { background: rgba(200,134,10,0.06); }
+.result-type {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: #7a5828;
+  text-transform: uppercase;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+.result-main { flex: 1; min-width: 0; }
+.result-name { color: #d4b896; font-size: 0.9rem; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.result-sub  { color: #6a5030; font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-empty {
+  padding: 20px 14px;
+  text-align: center;
+  font-family: 'Crimson Text', serif;
+  font-size: 0.9rem;
+  color: #4a3818;
+  font-style: italic;
+}
+.search-footer {
+  padding: 7px 14px;
+  border-top: 1px solid rgba(200,134,10,0.12);
+  font-size: 0.72rem;
+  color: #4a3818;
+  font-family: 'Crimson Text', serif;
+  flex-shrink: 0;
+}
