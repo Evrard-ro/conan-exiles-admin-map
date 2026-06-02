@@ -17,8 +17,8 @@ var mapConfigs = {
   },
   siptah: {
     label: 'Isle of Siptah',
-    rangeX: [1161000, 1961000],
-    rangeY: [-295000, 473000],
+    rangeX: [1118122, 1979015],
+    rangeY: [-263282, 528457],
     tiles: 'assets/tiles-siptah/{z}/{x}/{y}.png',
     xMin: 1000000
   }
@@ -102,6 +102,8 @@ function init() {
   tileLayer = L.tileLayer(mapConfigs[activeMap].tiles, {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
+    minNativeZoom: mapMaxZoom,
+    maxNativeZoom: mapMaxZoom,
     bounds: mapBounds,
     tms: false
   }).addTo(map)
@@ -226,6 +228,8 @@ function switchMap(name) {
   tileLayer = L.tileLayer(mapConfigs[name].tiles, {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
+    minNativeZoom: mapMaxZoom,
+    maxNativeZoom: mapMaxZoom,
     bounds: mapBounds,
     tms: false
   }).addTo(map)
