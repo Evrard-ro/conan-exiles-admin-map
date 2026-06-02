@@ -326,19 +326,18 @@ function drawData () {
 }
 
 function getOwnerById (ownerId) {
+  var id = String(ownerId)
   var owner
-
   playersData.find(function (player) {
-    if (player.char_id === ownerId) {
+    if (String(player.char_id) === id) {
       owner = player.char_name
       return true
     }
-    if (player.guild_id === ownerId) {
+    if (String(player.guild_id) === id) {
       owner = player.guild_name
       return true
     }
   })
-
   return owner || false
 }
 
@@ -495,7 +494,8 @@ function isOwnerInactive (marker) {
   } else if (marker.char_id) {
     lastSeen = playerLastOnline[marker.char_id]
   } else if (marker.owner) {
-    lastSeen = playerLastOnline[marker.owner] || guildLastOnline[marker.owner]
+    var ownerId = String(marker.owner)
+    lastSeen = playerLastOnline[ownerId] || guildLastOnline[ownerId]
   }
   if (lastSeen == null) return true
   var thresholdMs = Date.now() - inactiveDays * 86400000
