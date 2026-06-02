@@ -33,6 +33,8 @@ var clanFilter = 'all'
 var inactiveDays = 0
 var clusterEnabled = false
 var clusterGroups = {}
+var allMarkersData = []
+var markerByCoords = {}
 var playerLastOnline = {}
 var guildLastOnline = {}
 var circleMarkerOptions = {
@@ -202,6 +204,8 @@ function getTooltipContent (marker) {
 }
 
 function clearAllLayers () {
+  markerByCoords = {}
+
   Object.keys(markerLayers).forEach(function (k) {
     if (map.hasLayer(markerLayers[k])) map.removeLayer(markerLayers[k])
     markerLayers[k].clearLayers()
@@ -307,6 +311,7 @@ function drawData () {
     rebuildClanFilterMenu()
     return
   }
+  allMarkersData = []
   var remaining = kinds.length
   var allMarkers = []
   var lastUpdate = null
@@ -315,13 +320,34 @@ function drawData () {
     var url = kind.replace('_', '/')
     $.getJSON('api/' + url, function (data) {
       if (data.update) lastUpdate = data.update
-      if (data.data) allMarkers = allMarkers.concat(data.data)
+      if (data.data) {
+        data.data.forEach(function (item) { item._kind = kind })
+        allMarkersData = allMarkersData.concat(data.data)
+        allMarkers = allMarkers.concat(data.data)
+      }
       remaining--
       if (remaining === 0) {
         if (lastUpdate) $('.lastupdate').html(lastUpdate)
         renderMarkers(allMarkers)
+        updateFilterCounts()
       }
     })
+  })
+}
+
+function updateFilterCounts () {
+  var counts = {}
+  allMarkersData.forEach(function (item) {
+    if (!isOnActiveMap(item.x)) return
+    var k = item._kind
+    counts[k] = (counts[k] || 0) + 1
+  })
+  $('.filter-item').each(function () {
+    var id = $(this).attr('id')
+    if (!id) return
+    var kind = id.replace(/-filter$/, '')
+    var n = counts[kind]
+    $(this).find('.filter-count').text(n !== undefined ? n : '')
   })
 }
 
@@ -403,6 +429,8 @@ function createMarker(marker, group) {
   var point = L.circleMarker(toLatLng(marker.x, marker.y), opt)
     .bindTooltip(marker.tooltip, tooltipOptions)
     .on('click', onClick)
+
+  markerByCoords[marker.x + ',' + marker.y] = point
 
   if (group) {
     point.addTo(markerLayers[group])
@@ -512,10 +540,12 @@ function createMarkerInCluster (marker, clusterGroup) {
   opt.markerCharId = marker.char_id || null
   opt.markerCharName = marker.char_name || ''
 
-  L.circleMarker(toLatLng(marker.x, marker.y), opt)
+  var point = L.circleMarker(toLatLng(marker.x, marker.y), opt)
     .bindTooltip(marker.tooltip, tooltipOptions)
     .on('click', onClick)
     .addTo(clusterGroup)
+
+  markerByCoords[marker.x + ',' + marker.y] = point
 }
 
 function makeClusterIcon (color) {
