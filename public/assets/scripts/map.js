@@ -88,7 +88,7 @@ function init() {
   map.setMaxBounds(mapBounds)
   map.fitBounds(mapBounds)
 
-  L.tileLayer('assets/tiles/{z}/{x}/{y}.png', {
+  tileLayer = L.tileLayer(mapConfigs[activeMap].tiles, {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
     bounds: mapBounds,
@@ -129,6 +129,11 @@ function init() {
     toggleFilter(kind)
   })
 
+  // Map switch buttons
+  $(document).on('click', '.map-btn', function () {
+    switchMap($(this).data('map'))
+  })
+
   // Keep dropdown open when interacting with search inside it
   $('#clan-filter-menu').on('click', function (e) {
     e.stopPropagation()
@@ -161,6 +166,24 @@ function init() {
 
   getPlayers()
   showAll()
+}
+
+function switchMap(name) {
+  if (name === activeMap) return
+  activeMap = name
+
+  if (tileLayer) map.removeLayer(tileLayer)
+  tileLayer = L.tileLayer(mapConfigs[name].tiles, {
+    minZoom: mapMinZoom,
+    maxZoom: mapMaxZoom,
+    bounds: mapBounds
+  }).addTo(map)
+
+  map.fitBounds(mapBounds)
+  drawData()
+
+  $('.map-btn').removeClass('active')
+  $('.map-btn[data-map="' + name + '"]').addClass('active')
 }
 
 function getTooltipContent (marker) {
