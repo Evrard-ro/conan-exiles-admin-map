@@ -25,6 +25,7 @@
         <div class="sidebar-nav">
           <button class="sb-btn" data-panel="players" title="<%= lang['ui.player_list'] %>">👤</button>
           <button class="sb-btn" data-panel="filters" title="<%= lang['ui.filters'] %>">◈</button>
+          <button class="sb-btn" data-panel="search" title="<%= lang['ui.search'] %>">🔍</button>
           <button class="sb-btn" data-panel="clans" title="<%= lang['ui.clan_filter'] %>">⚑</button>
         </div>
         <div class="sidebar-spacer"></div>
@@ -49,35 +50,35 @@
           <div class="panel-body">
             <div class="filter-group">
               <div class="filter-group-label"><%= lang['ui.buildings'] %></div>
-              <label class="filter-item" id="crafting-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.crafting'] %></span></label>
-              <label class="filter-item" id="altars-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.altars'] %></span></label>
-              <label class="filter-item" id="thrones-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.thrones'] %></span></label>
-              <label class="filter-item" id="animalpens-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.animal_pens'] %></span></label>
-              <label class="filter-item" id="beds-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.beds'] %></span></label>
-              <label class="filter-item" id="buildings-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.buildings'] %></span></label>
-              <label class="filter-item" id="campfires-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.campfires'] %></span></label>
-              <label class="filter-item" id="chests-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.chests'] %></span></label>
-              <label class="filter-item" id="maprooms-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.map_rooms'] %></span></label>
-              <label class="filter-item" id="trebuchets-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.trebuchets'] %></span></label>
-              <label class="filter-item" id="vaults-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.vaults'] %></span></label>
-              <label class="filter-item" id="waterwells-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.water_wells'] %></span></label>
-              <label class="filter-item" id="wheelsofpain-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.wheels_of_pain'] %></span></label>
+              <label class="filter-item" id="crafting-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.crafting'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="altars-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.altars'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="thrones-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.thrones'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="animalpens-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.animal_pens'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="beds-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.beds'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="buildings-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.buildings'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="campfires-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.campfires'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="chests-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.chests'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="maprooms-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.map_rooms'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="trebuchets-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.trebuchets'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="vaults-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.vaults'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="waterwells-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.water_wells'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="wheelsofpain-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.wheels_of_pain'] %></span><span class="filter-count"></span></label>
             </div>
             <div class="filter-group">
               <div class="filter-group-label"><%= lang['ui.crab_pots'] %></div>
-              <label class="filter-item" id="crabpots-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.crab_pots'] %></span></label>
-              <label class="filter-item" id="fishnets-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.fish_nets'] %></span></label>
+              <label class="filter-item" id="crabpots-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.crab_pots'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="fishnets-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.fish_nets'] %></span><span class="filter-count"></span></label>
             </div>
             <div class="filter-group">
               <div class="filter-group-label"><%= lang['ui.players'] %></div>
-              <label class="filter-item" id="players-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.players'] %></span></label>
-              <label class="filter-item" id="pets-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.pets'] %></span></label>
-              <label class="filter-item" id="thralls-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.thralls'] %></span></label>
+              <label class="filter-item" id="players-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.players'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="pets-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.pets'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="thralls-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.thralls'] %></span><span class="filter-count"></span></label>
             </div>
             <div class="filter-group">
               <div class="filter-group-label">Pippi</div>
-              <label class="filter-item" id="pippi_all-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.pippi_all'] %></span></label>
-              <label class="filter-item" id="pippi_thespians-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.pippi_thespians'] %></span></label>
+              <label class="filter-item" id="pippi_all-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.pippi_all'] %></span><span class="filter-count"></span></label>
+              <label class="filter-item" id="pippi_thespians-filter"><span class="filter-check">✓</span><span class="filter-text"><%= lang['ui.pippi_thespians'] %></span><span class="filter-count"></span></label>
             </div>
             <button id="reset-filters" class="reset-btn" onclick="resetFilters(); return false;"><%= lang['ui.reset_filters'] %></button>
           </div>
@@ -89,10 +90,15 @@
             <span class="panel-title"><%= lang['ui.clan_filter'] %></span>
             <button class="panel-close">✕</button>
           </div>
-          <div class="panel-body" id="clan-filter-menu">
+          <div class="panel-body">
             <input type="text" id="clan-filter-search" class="clan-search" placeholder="<%= lang['ui.search'] %>">
+            <div class="clan-sort-row">
+              <button class="clan-sort-btn active" data-sort="count">By count ↓</button>
+              <button class="clan-sort-btn" data-sort="name">By name</button>
+              <button class="clan-sort-btn" data-sort="activity">By activity</button>
+            </div>
             <div class="clan-divider"></div>
-            <a class="clan-item active" href="#" data-clan="all" onclick="selectClanFilter('all'); return false;"><%= lang['ui.all_clans'] %></a>
+            <div id="clan-filter-menu"></div>
           </div>
         </div>
 
@@ -137,6 +143,17 @@
               </label>
             </div>
           </div>
+        </div>
+
+        <!-- Search panel -->
+        <div id="panel-search" class="overlay-panel overlay-panel--search" style="display:flex;flex-direction:column">
+          <div class="search-input-row">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="<%= lang['ui.search'] %>...">
+            <span class="search-hint">ESC</span>
+          </div>
+          <div id="search-results" class="search-results"></div>
+          <div class="search-footer"><%= lang['ui.search'] %>: name, clan, faction, type</div>
         </div>
 
         <!-- Status bar -->
