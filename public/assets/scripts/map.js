@@ -103,6 +103,9 @@ function init() {
     var name = $(this).data('panel')
     if (name === 'players') {
       showPlayerList()
+    } else if (name === 'search') {
+      openPanel('search')
+      setTimeout(function () { $('#search-input').focus() }, 50)
     } else {
       openPanel(name)
     }
@@ -169,6 +172,28 @@ function init() {
       playersSort.dir = 'asc'
     }
     renderPlayerTable()
+  })
+
+  $(document).on('input', '#search-input', function () {
+    performSearch($(this).val())
+  })
+
+  $(document).on('keydown', '#search-input', function (e) {
+    if (e.key === 'Enter') {
+      var first = $('#search-results .search-result').first()
+      if (first.length) first.trigger('click')
+    }
+  })
+
+  $(document).on('keydown', function (e) {
+    if (e.ctrlKey && e.key === 'f') {
+      e.preventDefault()
+      openPanel('search')
+      setTimeout(function () { $('#search-input').focus() }, 50)
+    }
+    if (e.key === 'Escape') {
+      closePanel()
+    }
   })
 
   getPlayers()
@@ -512,6 +537,8 @@ function openPanel (name) {
 function closePanel () {
   $('.overlay-panel').removeClass('open')
   $('.sb-btn:not(.map-btn)').removeClass('active')
+  $('#search-input').val('')
+  $('#search-results').empty()
 }
 
 function showPlayerList () {
@@ -739,6 +766,148 @@ function applyClanFilter () {
       if (map.hasLayer(groups[id])) map.removeLayer(groups[id])
     }
   })
+}
+
+function pulseMarker (lm) {
+  lm.setStyle({ color: 'white', weight: 4 })
+  setTimeout(function () { lm.setStyle({ color: 'black', weight: 1 }) }, 2000)
+}
+
+function navigateToResult (x, y) {
+  map.panTo(toLatLng(x, y))
+  var lm = markerByCoords[x + ',' + y]
+  if (lm) pulseMarker(lm)
+}
+
+function searchTypeLabel (kind) {
+  var ph = language.phrases
+  var labels = {
+    thrall:   ph['ui.thrall']    || 'Thrall',
+    pet:      ph['ui.pet']       || 'Pet',
+    player:   ph['ui.player']    || 'Player',
+    clan:     ph['ui.guild']     || 'Guild',
+    building: ph['ui.buildings'] || 'Building'
+  }
+  return labels[kind] || kind
+}
+
+function renderSearchResult (item, type) {
+  var name, sub, badge
+
+  if (type === 'clan') {
+    name = item.name
+    sub = item.count + ' markers'
+    badge = ''
+  } else if (type === 'thrall') {
+    var parsed = parseThrallInfo(item.info)
+    name = item.name || '—'
+    sub = (parsed.faction || '') + (item.owner ? ' · ' + (getOwnerById(item.owner) || item.owner) : '')
+    badge = parsed.tier ? '<span class="badge ' + tierBadgeClass(parsed.tier) + '">' + parsed.tier + '</span>' : ''
+  } else if (type === 'pet') {
+    name = item.name || '—'
+    sub = (item.info || '') + (item.owner ? ' · ' + (getOwnerById(item.owner) || item.owner) : '')
+    badge = item.greater ? '<span class="badge badge-alpha">Alpha</span>' : ''
+  } else if (type === 'player') {
+    name = item.char_name || '—'
+    sub = item.guild_name || ''
+    badge = item.online == 1 ? '<span class="badge badge-online">● Online</span>' : ''
+  } else {
+    var translatedKind = (item.kind && language.phrases['items.' + item.kind]) || item.kind || item.class || ''
+    name = translatedKind
+    sub = item.guild_name || item.char_name || ''
+    badge = ''
+  }
+
+  var el = $('<div>').addClass('search-result')
+    .attr('data-x', item.x || null)
+    .attr('data-y', item.y || null)
+    .html(
+      '<span class="result-type">' + escapeHtml(searchTypeLabel(type)) + '</span>' +
+      '<div class="result-main">' +
+        '<div class="result-name">' + escapeHtml(name) + '</div>' +
+        (sub ? '<div class="result-sub">' + escapeHtml(sub) + '</div>' : '') +
+      '</div>' +
+      badge
+    )
+    .on('click', function () {
+      if (type === 'clan') {
+        selectClanFilter(item.id)
+      } else {
+        navigateToResult(parseFloat(item.x), parseFloat(item.y))
+      }
+      closePanel()
+    })
+  return el
+}
+
+function performSearch (query) {
+  var $results = $('#search-results')
+  $results.empty()
+  var q = (query || '').toLowerCase().trim()
+  if (!q) return
+
+  var MAX_PER_GROUP = 10
+  var groups = {
+    thralls:  { label: language.phrases['ui.thralls'] || 'Thralls',  items: [] },
+    pets:     { label: language.phrases['ui.pets']    || 'Pets',     items: [] },
+    players:  { label: language.phrases['ui.players'] || 'Players',  items: [] },
+    building: { label: language.phrases['ui.buildings'] || 'Buildings', items: [] },
+    clan:     { label: language.phrases['ui.clan_filter'] || 'Clans', items: [] }
+  }
+
+  allMarkersData.forEach(function (item) {
+    if (!isOnActiveMap(item.x)) return
+    var kind = item._kind
+    var group, fields
+
+    if (kind === 'thralls') {
+      group = groups.thralls
+      var ownerName = getOwnerById(item.owner) || ''
+      fields = [item.name, item.info, ownerName]
+    } else if (kind === 'pets') {
+      group = groups.pets
+      var ownerName = getOwnerById(item.owner) || ''
+      fields = [item.name, item.info, ownerName]
+    } else if (kind === 'players') {
+      group = groups.players
+      fields = [item.char_name, item.guild_name]
+    } else {
+      group = groups.building
+      var tKind = (item.kind && language.phrases['items.' + item.kind]) || item.kind || ''
+      fields = [tKind, item.guild_name, item.char_name]
+    }
+
+    if (group.items.length >= MAX_PER_GROUP) return
+    var matched = fields.some(function (s) { return s && String(s).toLowerCase().indexOf(q) !== -1 })
+    if (matched) group.items.push(item)
+  })
+
+  // Clan search from groupNames
+  Object.keys(groupNames).forEach(function (id) {
+    if (groups.clan.items.length >= MAX_PER_GROUP) return
+    var name = groupNames[id] || ''
+    if (name.toLowerCase().indexOf(q) !== -1) {
+      var layers = (clusterEnabled ? clusterGroups : markerLayers)[id]
+      var count = layers && layers.getLayers ? layers.getLayers().length : 0
+      groups.clan.items.push({ id: id, name: name, count: count, _clan: true })
+    }
+  })
+
+  var hasAny = false
+  var typeKeys = ['thralls', 'pets', 'players', 'building', 'clan']
+  typeKeys.forEach(function (key) {
+    var g = groups[key]
+    if (!g.items.length) return
+    hasAny = true
+    $results.append('<div class="search-group-label">' + escapeHtml(g.label) + ' (' + g.items.length + ')</div>')
+    g.items.forEach(function (item) {
+      $results.append(renderSearchResult(item, key === 'building' ? key : key.replace(/s$/, '')))
+    })
+  })
+
+  if (!hasAny) {
+    $results.html('<div class="search-empty">Nothing found</div>')
+  }
 }
 
 function getPlayers () {
