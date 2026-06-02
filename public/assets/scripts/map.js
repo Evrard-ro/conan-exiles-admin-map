@@ -80,7 +80,7 @@ function init() {
     maxBoundsViscosity: 1
   })
 
-  var mapBounds = new L.LatLngBounds(
+  mapBounds = new L.LatLngBounds(
     map.unproject([0, 16128], mapMaxZoom),
     map.unproject([16128, 0], mapMaxZoom)
   )
