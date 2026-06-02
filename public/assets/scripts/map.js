@@ -30,6 +30,7 @@ var boundsX = [ 14.4, 230.7 ]
 var boundsY = [ -47.7, -245.3 ]
 var activeKinds = {}
 var clanFilter = 'all'
+var clanSortMode = 'count'
 var inactiveDays = 0
 var clusterEnabled = false
 var clusterGroups = {}
@@ -144,10 +145,14 @@ function init() {
     e.stopPropagation()
   })
   $('#clan-filter-search').on('input', function () {
-    var q = $(this).val().toLowerCase()
-    $('#clan-filter-menu .clan-item').each(function () {
-      $(this).toggle($(this).text().toLowerCase().indexOf(q) !== -1)
-    })
+    rebuildClanFilterMenu()
+  })
+
+  $(document).on('click', '.clan-sort-btn', function () {
+    clanSortMode = $(this).data('sort')
+    $('.clan-sort-btn').removeClass('active')
+    $(this).addClass('active')
+    rebuildClanFilterMenu()
   })
 
   $('#players-search').on('input', function () {
@@ -638,43 +643,90 @@ function clusterTooltipHtml (cluster) {
   return '<div class="cluster-tooltip"><table>' + rows + '</table></div>'
 }
 
+function getActivityInfo (lastSeen) {
+  if (!lastSeen) return { cls: 'grey', label: 'Unknown' }
+  var daysAgo = Math.floor((Date.now() - lastSeen) / 86400000)
+  if (daysAgo === 0) return { cls: 'green', label: 'Online today' }
+  if (daysAgo <= 7)  return { cls: 'green', label: daysAgo + 'd ago' }
+  if (daysAgo <= 30) return { cls: 'yellow', label: daysAgo + 'd ago' }
+  return { cls: 'grey', label: daysAgo + 'd ago' }
+}
+
 function rebuildClanFilterMenu () {
   var currentGroups = clusterEnabled ? clusterGroups : markerLayers
   var groups = Object.keys(currentGroups)
   var menu = $('#clan-filter-menu')
-  menu.find('.clan-item').remove()
+  var q = ($('#clan-filter-search').val() || '').toLowerCase()
 
-  // If the selected clan no longer exists in the current data, reset to 'all'
-  if (clanFilter !== 'all' && !currentGroups[clanFilter]) {
-    clanFilter = 'all'
-    menu.find('.clan-item').removeClass('active')
-    menu.find('[data-clan="all"]').addClass('active')
+  // Build group data
+  var totalCount = 0
+  var groupData = groups.map(function (id) {
+    var layers = currentGroups[id]
+    var count = layers.getLayers ? layers.getLayers().length : 0
+    totalCount += count
+    return {
+      id: id,
+      name: groupNames[id] || id,
+      color: groupColors[id] || '#666',
+      count: count,
+      lastSeen: guildLastOnline[id] || playerLastOnline[id] || null
+    }
+  })
+
+  // Sort
+  if (clanSortMode === 'name') {
+    groupData.sort(function (a, b) { return a.name.localeCompare(b.name) })
+  } else if (clanSortMode === 'activity') {
+    groupData.sort(function (a, b) { return (b.lastSeen || 0) - (a.lastSeen || 0) })
+  } else {
+    groupData.sort(function (a, b) { return b.count - a.count })
   }
 
-  groups.forEach(function (id) {
-    var name = groupNames[id] || id
-    var color = groupColors[id] || '#666'
-    var isActive = clanFilter === id
-    var item = $('<a>')
-      .addClass('clan-item' + (isActive ? ' active' : ''))
-      .attr('href', '#')
-      .attr('data-clan', id)
-      .html('<span class="clan-dot" style="background:' + escapeHtml(color) + '"></span>' + escapeHtml(name))
-      .on('click', function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-        selectClanFilter(id)
-      })
+  // Reset to 'all' if selected clan disappeared
+  if (clanFilter !== 'all' && !currentGroups[clanFilter]) {
+    clanFilter = 'all'
+  }
+
+  // Render
+  menu.empty()
+
+  // All clans row
+  var allLabel = (language.phrases['ui.all_clans'] || 'All clans')
+  var allItem = $('<a>')
+    .addClass('clan-item-all' + (clanFilter === 'all' ? ' active' : ''))
+    .attr('href', '#')
+    .attr('data-clan', 'all')
+    .html(escapeHtml(allLabel) + ' <span class="clan-count-badge">' + totalCount + '</span>')
+    .on('click', function (e) { e.preventDefault(); selectClanFilter('all') })
+  menu.append(allItem)
+
+  // Clan rows
+  groupData.forEach(function (g) {
+    if (q && g.name.toLowerCase().indexOf(q) === -1) return
+    var act = getActivityInfo(g.lastSeen)
+    var isActive = clanFilter === g.id
+    var item = $('<div>')
+      .addClass('clan-item-expanded' + (isActive ? ' active' : ''))
+      .attr('data-clan', g.id)
+      .html(
+        '<div class="clan-exp-top">' +
+          '<span class="clan-dot" style="background:' + escapeHtml(g.color) + '"></span>' +
+          '<span class="clan-exp-name">' + escapeHtml(g.name) + '</span>' +
+          '<span class="clan-count-badge">' + g.count + '</span>' +
+        '</div>' +
+        '<div class="clan-exp-sub">' +
+          '<span class="clan-act-dot ' + act.cls + '"></span>' +
+          '<span class="clan-act-label ' + act.cls + '">' + escapeHtml(act.label) + '</span>' +
+        '</div>'
+      )
+      .on('click', function () { selectClanFilter(g.id) })
     menu.append(item)
   })
 }
 
 function selectClanFilter (id) {
   clanFilter = id
-  $('#clan-filter-menu .clan-item').removeClass('active')
-  $('#clan-filter-menu .clan-item').each(function () {
-    if ($(this).attr('data-clan') === id) $(this).addClass('active')
-  })
+  rebuildClanFilterMenu()
   applyClanFilter()
 }
 
