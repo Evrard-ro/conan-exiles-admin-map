@@ -189,18 +189,72 @@ function switchMap(name) {
   $('.map-btn').filter(function () { return $(this).data('map') === name }).addClass('active')
 }
 
-function getTooltipContent (marker) {
-  var content = ''
+function makeBadge (cls, text) {
+  return '<span class="badge ' + cls + '">' + escapeHtml(text) + '</span>'
+}
 
-  if (marker.kind) {
-    marker.kind = language.phrases['items.' + marker.kind] || marker.kind
-    content += marker.kind + '<br/>'
+function tipRow (label, value) {
+  var val = (value === null || value === undefined || value === '' || value === 'Unknown')
+    ? '<span class="tip-val-dim">—</span>'
+    : '<span class="tip-val">' + escapeHtml(String(value)) + '</span>'
+  return '<div class="tip-row"><span class="tip-lbl">' + escapeHtml(label) + '</span>' + val + '</div>'
+}
+
+function parseThrallInfo (info) {
+  if (!info) return { faction: '', tier: null }
+  var m = info.match(/\b(T[1-4])\b/i)
+  if (!m) return { faction: info, tier: null }
+  return { tier: m[1].toUpperCase(), faction: info.replace(m[0], '').trim() }
+}
+
+function tierBadgeClass (tier) {
+  return { T1: 'badge-t1', T2: 'badge-t2', T3: 'badge-t3', T4: 'badge-t4' }[tier] || ''
+}
+
+function getTooltipContent (marker) {
+  var ph = language.phrases
+  var header = ''
+  var badge = ''
+  var rows = ''
+  var kind = marker._kind || ''
+
+  if (kind === 'players') {
+    header = ph['ui.player'] || 'Player'
+    badge = marker.online == 1 ? makeBadge('badge-online', '● Online') : ''
+    rows += tipRow(ph['ui.guild'] || 'Guild', marker.guild_name)
+    rows += tipRow(ph['ui.rank'] || 'Rank', marker.rank)
+    rows += tipRow(ph['ui.level'] || 'Level', marker.level)
+
+  } else if (kind === 'thralls') {
+    var parsed = parseThrallInfo(marker.info)
+    header = ph['ui.thrall'] || 'Thrall'
+    badge = parsed.tier ? makeBadge(tierBadgeClass(parsed.tier), parsed.tier) : ''
+    rows += tipRow(ph['ui.name'] || 'Name', marker.name)
+    rows += tipRow(ph['ui.faction'] || 'Faction', parsed.faction)
+    rows += tipRow(ph['ui.owner'] || 'Owner', getOwnerById(marker.owner) || String(marker.owner || '—'))
+
+  } else if (kind === 'pets') {
+    header = ph['ui.pet'] || 'Pet'
+    badge = marker.greater ? makeBadge('badge-alpha', 'Alpha') : ''
+    rows += tipRow(ph['ui.name'] || 'Name', marker.name)
+    rows += tipRow(ph['ui.species'] || 'Species', marker.info)
+    rows += tipRow(ph['ui.owner'] || 'Owner', getOwnerById(marker.owner) || String(marker.owner || '—'))
+
+  } else {
+    // Building (and pippi)
+    var translatedKind = marker.kind ? (ph['items.' + marker.kind] || marker.kind) : ''
+    header = translatedKind
+    if (marker.guild_name) rows += tipRow(ph['ui.guild'] || 'Guild', marker.guild_name)
+    else rows += tipRow(ph['ui.player'] || 'Player', marker.char_name)
   }
-  if (marker.name) content += marker.name + '<br/>'
-  if (marker.info) content += marker.info + '<br/>'
-  if (marker.char_name) content += marker.char_name + '<br/>'
-  if (marker.guild_name) content += marker.guild_name + '<br/>'
-  return content
+
+  var tip = '<div class="tip-header">' + escapeHtml(header)
+  if (badge) tip += ' ' + badge
+  tip += '</div>'
+  tip += rows
+  tip += '<div class="tip-sep"></div>'
+  tip += '<div class="tip-tele">🖱 ' + (ph['ui.teleport_hint'] || 'click to copy teleport') + '</div>'
+  return tip
 }
 
 function clearAllLayers () {
