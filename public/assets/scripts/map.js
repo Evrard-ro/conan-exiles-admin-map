@@ -487,8 +487,6 @@ function resetFilters () {
   $('#inactive-days').val('')
   $('#cluster-toggle').prop('checked', false)
   $('#clan-filter-search').val('')
-  $('#clan-filter-menu .clan-item').removeClass('active')
-  $('#clan-filter-menu [data-clan="all"]').addClass('active')
   drawData()
 }
 
@@ -604,9 +602,9 @@ function isOwnerInactive (marker) {
   if (!inactiveDays || inactiveDays <= 0) return true
   var lastSeen
   if (marker.guild_id) {
-    lastSeen = guildLastOnline[marker.guild_id]
+    lastSeen = guildLastOnline[String(marker.guild_id)]
   } else if (marker.char_id) {
-    lastSeen = playerLastOnline[marker.char_id]
+    lastSeen = playerLastOnline[String(marker.char_id)]
   } else if (marker.owner) {
     var ownerId = String(marker.owner)
     lastSeen = playerLastOnline[ownerId] || guildLastOnline[ownerId]

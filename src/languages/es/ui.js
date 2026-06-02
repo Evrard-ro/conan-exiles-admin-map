@@ -39,6 +39,7 @@ export default {
   "last_seen_online": "Última vez online",
 
   "teleport_copied": "¡TeleportPlayer copiado!",
+  "teleport_hint": "clic para copiar teleport",
 
   "inactive_days": "Inactivos desde",
   "inactive_days_placeholder": "días",
