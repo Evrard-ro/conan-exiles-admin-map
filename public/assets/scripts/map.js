@@ -219,7 +219,7 @@ function clearAllLayers () {
 function isOnActiveMap(x) {
   var cfg = mapConfigs[activeMap]
   if (cfg.xMax !== undefined && x >= cfg.xMax) return false
-  if (cfg.xMin !== undefined && x <= cfg.xMin) return false
+  if (cfg.xMin !== undefined && x < cfg.xMin) return false
   return true
 }
 
