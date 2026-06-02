@@ -183,7 +183,7 @@ function switchMap(name) {
   drawData()
 
   $('.map-btn').removeClass('active')
-  $('.map-btn[data-map="' + name + '"]').addClass('active')
+  $('.map-btn').filter(function () { return $(this).data('map') === name }).addClass('active')
 }
 
 function getTooltipContent (marker) {
