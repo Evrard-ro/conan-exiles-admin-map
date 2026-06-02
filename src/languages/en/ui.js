@@ -22,11 +22,17 @@ export default {
 
   "players": "Players",
   "pets": "Pets",
+  "thralls": "Thralls",
 
   "pippi_all": "All Pippi Placeables",
   "pippi_thespians": "Pippi Thespians",
 
   "player": "Player",
+  "thrall": "Thrall",
+  "pet": "Pet",
+  "owner": "Owner",
+  "faction": "Faction",
+  "species": "Species",
   "guild": "Guild",
   "rank": "Rank",
   "level": "Level",
