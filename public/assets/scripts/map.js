@@ -17,10 +17,10 @@ var mapConfigs = {
   },
   siptah: {
     label: 'Isle of Siptah',
-    rangeX: [1234655, 1884492],
-    rangeY: [-354417, 325164],
+    rangeX: [1161000, 1961000],
+    rangeY: [-295000, 473000],
     tiles: 'assets/tiles-siptah/{z}/{x}/{y}.png',
-    xMin: 1234655
+    xMin: 1000000
   }
 }
 var activeMap = 'exiledlands'
