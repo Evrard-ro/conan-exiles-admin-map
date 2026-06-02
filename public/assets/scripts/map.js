@@ -176,7 +176,8 @@ function switchMap(name) {
   tileLayer = L.tileLayer(mapConfigs[name].tiles, {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
-    bounds: mapBounds
+    bounds: mapBounds,
+    tms: false
   }).addTo(map)
 
   map.fitBounds(mapBounds)
@@ -424,7 +425,7 @@ function openPanel (name) {
 
 function closePanel () {
   $('.overlay-panel').removeClass('open')
-  $('.sb-btn').removeClass('active')
+  $('.sb-btn:not(.map-btn)').removeClass('active')
 }
 
 function showPlayerList () {
