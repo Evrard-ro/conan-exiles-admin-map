@@ -20,7 +20,7 @@ var mapConfigs = {
     rangeX: [1234655, 1884492],
     rangeY: [-354417, 325164],
     tiles: 'assets/tiles-siptah/{z}/{x}/{y}.png',
-    xMin: 800000
+    xMin: 1234655
   }
 }
 var activeMap = 'exiledlands'
