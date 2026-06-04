@@ -22,17 +22,24 @@ export default {
 
   "players": "Jugadores",
   "pets": "Mascotas",
+  "thralls": "Siervos",
 
   "pippi_all": "Pippi - Todos",
   "pippi_thespians": "Pippi Thespians",
 
   "player": "Jugador",
+  "thrall": "Siervo",
+  "pet": "Mascota",
+  "owner": "Propietario",
+  "faction": "Facción",
+  "species": "Especie",
   "guild": "Clan",
   "rank": "Rango",
   "level": "Nivel",
   "last_seen_online": "Última vez online",
 
   "teleport_copied": "¡TeleportPlayer copiado!",
+  "teleport_hint": "clic para copiar teleport",
 
   "inactive_days": "Inactivos desde",
   "inactive_days_placeholder": "días",

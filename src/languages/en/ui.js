@@ -22,17 +22,24 @@ export default {
 
   "players": "Players",
   "pets": "Pets",
+  "thralls": "Thralls",
 
   "pippi_all": "All Pippi Placeables",
   "pippi_thespians": "Pippi Thespians",
 
   "player": "Player",
+  "thrall": "Thrall",
+  "pet": "Pet",
+  "owner": "Owner",
+  "faction": "Faction",
+  "species": "Species",
   "guild": "Guild",
   "rank": "Rank",
   "level": "Level",
   "last_seen_online": "Last seen online",
 
   "teleport_copied": "¡TeleportPlayer copied!",
+  "teleport_hint": "click to copy teleport",
 
   "inactive_days": "Inactive since",
   "inactive_days_placeholder": "days",

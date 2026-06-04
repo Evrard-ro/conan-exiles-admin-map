@@ -72,6 +72,7 @@ module.exports = {
     left outer join characters as c on c.id = b.owner_id
     where b.owner_id > 0
     and ap.class like '%BP_PL_Chest%'
+    and ap.class not like '%BP_PL_Chest_Vault%'
   `,
   crabPots: `
     select ap.class, ap.x, ap.y, ap.z, g.name as guild_name, g.guildid as guild_id, c.char_name, c.id as char_id, b.owner_id from buildings as b
@@ -88,6 +89,12 @@ module.exports = {
     left outer join characters as c on c.id = b.owner_id
     where b.owner_id > 0
     and ap.class like '%BP_PL_Crafting%'
+    and ap.class not like '%BP_PL_Crafting_CampFire%'
+    and ap.class not like '%BP_PL_Crafting_Bonfire%'
+    and ap.class not like '%BP_PL_Crafting_CrabPot%'
+    and ap.class not like '%BP_PL_Crafting_FishNet%'
+    and ap.class not like '%BP_PL_Crafting_Station_AnimalPen%'
+    and ap.class not like '%BP_PL_CraftingStation_WheelOfPain%'
   `,
   fishNets: `
     select ap.class, ap.x, ap.y, ap.z, g.name as guild_name, g.guildid as guild_id, c.char_name, c.id as char_id, b.owner_id from buildings as b
@@ -106,13 +113,21 @@ module.exports = {
     and ap.class like '%BP_PL_Maproom%'
   `,
   pets: `
-    select ap.x, ap.y, ap.z, petname.value as name, petinfo.value as info, petowner.value as owner
+    select ap.class, ap.x, ap.y, ap.z, petname.value as name, petinfo.value as info, petowner.value as owner
     from actor_position as ap
     left outer join properties as petname on petname.object_id = ap.id and petname.name like '%petname'
     left outer join properties as petinfo on petinfo.object_id = ap.id and petinfo.name like '%thrallinfo'
     left outer join properties as petowner on petowner.object_id = ap.id and petowner.name like '%owner%'
     where ap.class like '%wildlife%pet%'
     or ap.class like '%pict_wildlife%'
+  `,
+  thralls: `
+    select ap.class, ap.x, ap.y, ap.z, thrallname.value as name, thrallinfo.value as info, thrallowner.value as owner
+    from actor_position as ap
+    left outer join properties as thrallname on thrallname.object_id = ap.id and thrallname.name like '%ThrallName'
+    left outer join properties as thrallinfo on thrallinfo.object_id = ap.id and thrallinfo.name like '%ThrallInfo'
+    left outer join properties as thrallowner on thrallowner.object_id = ap.id and thrallowner.name like '%OwnerUniqueID'
+    where ap.class like '%PersistentHumanoidNPC%'
   `,
   pippiThespians: `
     select ap.class, ap.x, ap.y, ap.z, pippi.value as buffer

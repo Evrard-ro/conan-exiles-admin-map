@@ -1,6 +1,8 @@
 export default {
 
   // Altar
+  "/Game/Systems/Building/Placeables/BP_PL_Altar_Zath.BP_PL_Altar_Zath_C": "Nest of Zath",
+  "/Game/Systems/Building/Placeables/BP_PL_Altar_Zath_T2.BP_PL_Altar_Zath_T2_C": "Fane of Zath",
   "/Game/Systems/Building/Placeables/BP_PL_Altar_Derketo.BP_PL_Altar_Derketo_C": "Pleasure Place of Derketo",
   "/Game/Systems/Building/Placeables/BP_PL_Altar_Derketo_T2.BP_PL_Altar_Derketo_T2_C": "Pleasure Dome of Derketo",
   "/Game/Systems/Building/Placeables/BP_PL_Altar_Derketo_T3.BP_PL_Altar_Derketo_T3_C": "Pleasure Palace of Derketo",
@@ -24,6 +26,8 @@ export default {
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Tier_1.BP_PL_Crafting_Station_AnimalPen_Tier_1_C": "Animal Pen",
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Tier_2.BP_PL_Crafting_Station_AnimalPen_Tier_2_C": "Reinforced Animal Pen",
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Tier_3.BP_PL_Crafting_Station_AnimalPen_Tier_3_C": "Armored Animal Pen",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Small.BP_PL_Crafting_Station_AnimalPen_Small_C": "Small Animal Pen",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Stables.BP_PL_Crafting_Station_AnimalPen_Stables_C": "Stables",
 
   // Bed
   "/Game/Systems/Building/Placeables/BP_PL_Bed_Common.BP_PL_Bed_Common_C": "Bed",
@@ -33,10 +37,14 @@ export default {
   "/Game/Systems/Building/Placeables/BP_PL_Bed_Single_Stygian2.BP_PL_Bed_Single_Stygian2_C": "Bed - Stygian",
   "/Game/Systems/Building/Placeables/BP_PL_Bed_Demo.BP_PL_Bed_Demo_C": "Nordheimer Bed",
   "/Game/DLC/DLC_Aquilonia/Blueprints/BP_PL_Bed_Aquilonian.BP_PL_Bed_Aquilonian_C": "Ornate Single Bed",
+  "/Game/DLC/DLC_Argos/Blueprints/BP_PL_Bed_Argos.BP_PL_Bed_Argos_C": "Argossean Bed",
+  "/Game/DLC/DLC_Nemedia/Blueprints/BP_PL_Bed_Double_Nemedia.BP_PL_Bed_Double_Nemedia_C": "Nemedian Double Bed",
+  "/Game/DLC/DLC_RPPack/Blueprints/BP_PL_Bed_Tavern.BP_PL_Bed_Tavern_C": "Tavern Bed",
 
   // Bedroll
   "/Game/Systems/Building/Placeables/BP_PL_Bedroll_Fiber.BP_PL_Bedroll_Fiber_C": "Fiber Bedroll",
   "/Game/Systems/Building/Placeables/BP_PL_Bedroll_Clean.BP_PL_Bedroll_Clean_C": "Rawhide Bedroll",
+  "/Game/DLC/Special/blueprints/BP_PL_Bedroll_Turanian.BP_PL_Bedroll_Turanian_C": "Turanian Bedroll",
 
   // Beehive
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Beehive.BP_PL_Crafting_Beehive_C": "Beehive",
@@ -48,6 +56,27 @@ export default {
   "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal.BP_PL_CraftingStation_Metal_C": "Blacksmith's Bench",
   "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal2.BP_PL_CraftingStation_Metal2_C": "Improved Blacksmith's Bench",
   "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood.BP_PL_CraftingStation_Wood_C": "Carpenter's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood2.BP_PL_CraftingStation_Wood2_C": "Improved Carpenter's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood3_varA.BP_PL_CraftingStation_Wood3_varA_C": "Improved Carpenter's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood3_varB.BP_PL_CraftingStation_Wood3_varB_C": "Improved Carpenter's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Armor3_varA.BP_PL_CraftingStation_Armor3_varA_C": "Improved Armorer's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Armor3_varB.BP_PL_CraftingStation_Armor3_varB_C": "Improved Armorer's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal3_varA.BP_PL_CraftingStation_Metal3_varA_C": "Improved Blacksmith's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal3_varB.BP_PL_CraftingStation_Metal3_varB_C": "Improved Blacksmith's Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Tannery3_varA.BP_PL_CraftingStation_Tannery3_varA_C": "Improved Tannery",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Tannery3_varB.BP_PL_CraftingStation_Tannery3_varB_C": "Improved Tannery",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Furnace3_varA.BP_PL_CraftingStation_Furnace3_varA_C": "Improved Furnace",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Furnace3_varB.BP_PL_CraftingStation_Furnace3_varB_C": "Improved Furnace",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Furnace_Kiln.BP_PL_CraftingStation_Furnace_Kiln_C": "Kiln",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Mixer3_varB.BP_PL_CraftingStation_Mixer3_varB_C": "Improved Firebowl Cauldron",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Golemancy.BP_PL_CraftingStation_Golemancy_C": "Golem Workbench",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Dismantler.BP_PL_Crafting_Dismantler_C": "Dismantling Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Dismantler_T2.BP_PL_Crafting_Dismantler_T2_C": "Improved Dismantling Bench",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_BloodStone.BP_PL_Crafting_Station_BloodStone_C": "Blood Altar",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_ChalkCircle.BP_PL_Crafting_Station_ChalkCircle_C": "Ritual Circle",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_ShallowGrave.BP_PL_Crafting_Station_ShallowGrave_C": "Shallow Grave",
+  "/Game/DLC/Special/a2c2/items/Placeables/Blueprints/BP_PL_CraftingStation_StygianArmorerBench.BP_PL_CraftingStation_StygianArmorerBench_C": "Stygian Armorer's Bench",
+  "/Game/DLC/Special/a3c1/Items/Placeables/Blueprints/BP_PL_CraftingStation_LiuFeiFirebowlCauldron.BP_PL_CraftingStation_LiuFeiFirebowlCauldron_C": "Liu Fei's Firebowl Cauldron",
 
   // Building
   "/Game/Systems/Building/BP_BuildFoundation.BP_BuildFoundation_C": "Sandstone Building",
@@ -66,6 +95,18 @@ export default {
   "/Game/DLC/DLC_Aquilonia/Blueprints/BP_BuildTriangleFoundation_T3_Aquilonia.BP_BuildTriangleFoundation_T3_Aquilonia_C": "Aquilonian Building",
   "/Game/DLC/DLC_Pict/Blueprints/BP_BuildFoundation_T3_Pict.BP_BuildFoundation_T3_Pict_C": "Frontier Building",
   "/Game/DLC/DLC_Pict/Blueprints/BP_BuildTriangleFoundation_T3_Pict.BP_BuildTriangleFoundation_T3_Pict_C": "Frontier Building",
+  "/Game/DLC/DLC_Argos/Blueprints/BP_BuildTriangleFoundation_T3_Argos.BP_BuildTriangleFoundation_T3_Argos_C": "Argossean Building",
+  "/Game/DLC/DLC_BloodAndSand/Blueprints/BP_BuildTriangleFoundation_T3_BAS.BP_BuildTriangleFoundation_T3_BAS_C": "Arena Champion Building",
+  "/Game/DLC/DLC_Nemedia/Blueprints/BP_BuildFoundation_T3_Nemedia.BP_BuildFoundation_T3_Nemedia_C": "Nemedian Building",
+  "/Game/DLC/DLC_Riders/Blueprints/BP_BuildTriangleFoundation_T3_Stable.BP_BuildTriangleFoundation_T3_Stable_C": "Riders of Hyboria Building",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildFoundation_T1_Salvage.BP_BuildFoundation_T1_Salvage_C": "Flotsam Building",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildTriangleFoundation_T1_Salvage.BP_BuildTriangleFoundation_T1_Salvage_C": "Flotsam Building",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildFoundation_T3_Glass.BP_BuildFoundation_T3_Glass_C": "Glass Building",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildTriangleFoundation_T3_Glass.BP_BuildTriangleFoundation_T3_Glass_C": "Glass Building",
+  "/Game/DLC/DLC_Turan/Blueprints/BP_BuildFoundation_T3_Turan.BP_BuildFoundation_T3_Turan_C": "Turanian Building",
+  "/Game/DLC/DLC_Turan/Blueprints/BP_BuildTriangleFoundation_T3_Turan.BP_BuildTriangleFoundation_T3_Turan_C": "Turanian Building",
+  "/Game/DLC/DLC_Yamatai/Blueprints/BP_BuildFoundation_T3_Japan.BP_BuildFoundation_T3_Japan_C": "Yamatai Building",
+  "/Game/DLC/DLC_Yamatai/Blueprints/BP_BuildTriangleFoundation_T3_Japan.BP_BuildTriangleFoundation_T3_Japan_C": "Yamatai Building",
 
   // Campfire
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_CampFire.BP_PL_Crafting_CampFire_C": "Campfire",
@@ -75,6 +116,7 @@ export default {
   // Chest
   "/Game/Systems/Building/Placeables/BP_PL_Chest_Large_Cupboard.BP_PL_Chest_Large_Cupboard_C": "Cupboard",
   "/Game/Systems/Building/Placeables/BP_PL_Chest_Medium.BP_PL_Chest_Medium_C": "Wooden Box",
+  "/Game/Systems/Building/Placeables/BP_PL_Chest_Medium2.BP_PL_Chest_Medium2_C": "Decorated Chest",
   "/Game/Systems/Building/Placeables/BP_PL_Chest_Large.BP_PL_Chest_Large_C": "Large Chest",
 
   // Compost Heap

@@ -7,15 +7,35 @@ var groupColors = {}
 var map
 var mapMinZoom = 2
 var mapMaxZoom = 6
-var rangeX = [ -296000, 412000 ]
-var rangeY = [ -292000, 353500 ]
+var mapConfigs = {
+  exiledlands: {
+    label: 'Exiled Lands',
+    rangeX: [-296000, 412000],
+    rangeY: [-292000, 353500],
+    tiles: 'assets/tiles/{z}/{x}/{y}.webp',
+    xMax: 800000
+  },
+  siptah: {
+    label: 'Isle of Siptah',
+    rangeX: [1118122, 1979015],
+    rangeY: [-263282, 528457],
+    tiles: 'assets/tiles-siptah/{z}/{x}/{y}.webp',
+    xMin: 1000000
+  }
+}
+var activeMap = 'exiledlands'
+var tileLayer = null
+var mapBounds = null
 var boundsX = [ 14.4, 230.7 ]
 var boundsY = [ -47.7, -245.3 ]
 var activeKinds = {}
 var clanFilter = 'all'
+var clanSortMode = 'count'
 var inactiveDays = 0
 var clusterEnabled = false
 var clusterGroups = {}
+var allMarkersData = []
+var markerByCoords = {}
 var playerLastOnline = {}
 var guildLastOnline = {}
 var circleMarkerOptions = {
@@ -49,7 +69,16 @@ function convertRange( value, r1, r2 ) {
 }
 
 function toLatLng(x, y) {
-  return [ convertRange(y, rangeY, boundsY), convertRange(x, rangeX, boundsX) ]
+  var cfg = mapConfigs[activeMap]
+  return [ convertRange(y, cfg.rangeY, boundsY), convertRange(x, cfg.rangeX, boundsX) ]
+}
+
+function fromLatLng(lat, lng) {
+  var cfg = mapConfigs[activeMap]
+  return {
+    x: Math.round(convertRange(lng, boundsX, cfg.rangeX)),
+    y: Math.round(convertRange(lat, boundsY, cfg.rangeY))
+  }
 }
 
 function init() {
@@ -62,20 +91,46 @@ function init() {
     maxBoundsViscosity: 1
   })
 
-  var mapBounds = new L.LatLngBounds(
+  mapBounds = new L.LatLngBounds(
     map.unproject([0, 16128], mapMaxZoom),
     map.unproject([16128, 0], mapMaxZoom)
   )
 
   map.setMaxBounds(mapBounds)
-  map.fitBounds(mapBounds)
+  map.setView(mapBounds.getCenter(), 2)
 
-  L.tileLayer('assets/tiles/{z}/{x}/{y}.png', {
+  tileLayer = L.tileLayer(mapConfigs[activeMap].tiles, {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
+    minNativeZoom: mapMaxZoom,
+    maxNativeZoom: mapMaxZoom,
     bounds: mapBounds,
-    tms: false
+    tms: false,
+    updateWhenIdle: true,
+    keepBuffer: 0,
+    updateWhenZooming: false
   }).addTo(map)
+
+  // Sidebar panel toggles
+  $('.sb-btn[data-panel]').on('click', function () {
+    var name = $(this).data('panel')
+    if (name === 'players') {
+      showPlayerList()
+    } else if (name === 'search') {
+      openPanel('search')
+      setTimeout(function () { $('#search-input').focus() }, 50)
+    } else {
+      openPanel(name)
+    }
+  })
+
+  $(document).on('click', '.panel-close', function () {
+    closePanel()
+  })
+
+  $('#map').on('click', function () {
+    closePanel()
+  })
 
   $('#inactive-days').on('input', function () {
     inactiveDays = parseInt($(this).val(), 10) || 0
@@ -87,14 +142,15 @@ function init() {
     redrawAll()
   })
 
-  // Keep Filters dropdown open when selecting categories (close only on Reset)
-  $('.filters .dropdown-menu').on('click', '.dropdown-item:not(#reset-filters)', function (e) {
-    e.stopPropagation()
+  // Filter item clicks
+  $(document).on('click', '.filter-item', function () {
+    var kind = $(this).attr('id').replace(/-filter$/, '')
+    toggleFilter(kind)
   })
 
-  // Keep Settings dropdown open when interacting with inputs
-  $('#settings-menu').on('click', function (e) {
-    e.stopPropagation()
+  // Map switch buttons
+  $(document).on('click', '.map-btn', function () {
+    switchMap($(this).data('map'))
   })
 
   // Keep dropdown open when interacting with search inside it
@@ -105,10 +161,14 @@ function init() {
     e.stopPropagation()
   })
   $('#clan-filter-search').on('input', function () {
-    var q = $(this).val().toLowerCase()
-    $('#clan-filter-menu .clan-item').each(function () {
-      $(this).toggle($(this).text().toLowerCase().indexOf(q) !== -1)
-    })
+    rebuildClanFilterMenu()
+  })
+
+  $(document).on('click', '.clan-sort-btn', function () {
+    clanSortMode = $(this).data('sort')
+    $('.clan-sort-btn').removeClass('active')
+    $(this).addClass('active')
+    rebuildClanFilterMenu()
   })
 
   $('#players-search').on('input', function () {
@@ -127,25 +187,137 @@ function init() {
     renderPlayerTable()
   })
 
+  $(document).on('input', '#search-input', function () {
+    performSearch($(this).val())
+  })
+
+  $(document).on('keydown', '#search-input', function (e) {
+    if (e.key === 'Enter') {
+      var first = $('#search-results .search-result').first()
+      if (first.length) first.trigger('click')
+    }
+  })
+
+  map.on('mousemove', function (e) {
+    if ($('#coord-debug').is(':visible')) {
+      var c = fromLatLng(e.latlng.lat, e.latlng.lng)
+      $('#coord-text').text('TeleportPlayer ' + c.x + ' ' + c.y + ' 0')
+    }
+  })
+
+  window.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && (e.code === 'KeyF' || e.key === 'f' || e.key === 'F')) {
+      e.preventDefault()
+      openPanel('search')
+      setTimeout(function () { $('#search-input').focus() }, 50)
+    }
+    if (e.key === 'Escape') {
+      closePanel()
+    }
+    if (e.shiftKey && e.code === 'KeyC') {
+      $('#coord-debug').toggle()
+    }
+  }, true)
+
   getPlayers()
   showAll()
 }
 
-function getTooltipContent (marker) {
-  var content = ''
+function switchMap(name) {
+  if (name === activeMap) return
+  activeMap = name
 
-  if (marker.kind) {
-    marker.kind = language.phrases['items.' + marker.kind] || marker.kind
-    content += marker.kind + '<br/>'
+  if (tileLayer) map.removeLayer(tileLayer)
+  tileLayer = L.tileLayer(mapConfigs[name].tiles, {
+    minZoom: mapMinZoom,
+    maxZoom: mapMaxZoom,
+    minNativeZoom: mapMaxZoom,
+    maxNativeZoom: mapMaxZoom,
+    bounds: mapBounds,
+    tms: false,
+    updateWhenIdle: true,
+    keepBuffer: 0,
+    updateWhenZooming: false
+  }).addTo(map)
+
+  map.setView(mapBounds.getCenter(), 2)
+  drawData()
+
+  $('.map-btn').removeClass('active')
+  $('.map-btn').filter(function () { return $(this).data('map') === name }).addClass('active')
+}
+
+function makeBadge (cls, text) {
+  return '<span class="badge ' + cls + '">' + escapeHtml(text) + '</span>'
+}
+
+function tipRow (label, value) {
+  var val = (value === null || value === undefined || value === '' || value === 'Unknown')
+    ? '<span class="tip-val-dim">—</span>'
+    : '<span class="tip-val">' + escapeHtml(String(value)) + '</span>'
+  return '<div class="tip-row"><span class="tip-lbl">' + escapeHtml(label) + '</span>' + val + '</div>'
+}
+
+function parseThrallInfo (info) {
+  if (!info) return { faction: '', tier: null }
+  var m = info.match(/\b(T[1-4])\b/i)
+  if (!m) return { faction: info, tier: null }
+  return { tier: m[1].toUpperCase(), faction: info.replace(m[0], '').trim() }
+}
+
+function tierBadgeClass (tier) {
+  return { T1: 'badge-t1', T2: 'badge-t2', T3: 'badge-t3', T4: 'badge-t4' }[tier] || ''
+}
+
+function getTooltipContent (marker) {
+  var ph = language.phrases
+  var header = ''
+  var badge = ''
+  var rows = ''
+  var kind = marker._kind || ''
+
+  if (kind === 'players') {
+    header = ph['ui.player'] || 'Player'
+    badge = marker.online == 1 ? makeBadge('badge-online', '● Online') : ''
+    rows += tipRow(ph['ui.guild'] || 'Guild', marker.guild_name)
+    rows += tipRow(ph['ui.rank'] || 'Rank', marker.rank)
+    rows += tipRow(ph['ui.level'] || 'Level', marker.level)
+
+  } else if (kind === 'thralls') {
+    var parsed = parseThrallInfo(marker.info)
+    header = ph['ui.thrall'] || 'Thrall'
+    badge = parsed.tier ? makeBadge(tierBadgeClass(parsed.tier), parsed.tier) : ''
+    rows += tipRow(ph['ui.name'] || 'Name', marker.name)
+    rows += tipRow(ph['ui.faction'] || 'Faction', parsed.faction)
+    rows += tipRow(ph['ui.owner'] || 'Owner', getOwnerById(marker.owner) || String(marker.owner || '—'))
+
+  } else if (kind === 'pets') {
+    header = ph['ui.pet'] || 'Pet'
+    badge = marker.greater ? makeBadge('badge-alpha', 'Alpha') : ''
+    rows += tipRow(ph['ui.name'] || 'Name', marker.name)
+    rows += tipRow(ph['ui.species'] || 'Species', marker.info)
+    rows += tipRow(ph['ui.owner'] || 'Owner', getOwnerById(marker.owner) || String(marker.owner || '—'))
+
+  } else {
+    // Building (and pippi)
+    var translatedKind = marker.kind ? (ph['items.' + marker.kind] || marker.kind) : ''
+    header = translatedKind
+    if (marker.guild_name) rows += tipRow(ph['ui.guild'] || 'Guild', marker.guild_name)
+    else rows += tipRow(ph['ui.player'] || 'Player', marker.char_name)
   }
-  if (marker.name) content += marker.name + '<br/>'
-  if (marker.info) content += marker.info + '<br/>'
-  if (marker.char_name) content += marker.char_name + '<br/>'
-  if (marker.guild_name) content += marker.guild_name + '<br/>'
-  return content
+
+  var tip = '<div class="tip-header">' + escapeHtml(header)
+  if (badge) tip += ' ' + badge
+  tip += '</div>'
+  tip += rows
+  tip += '<div class="tip-sep"></div>'
+  tip += '<div class="tip-tele">🖱 ' + (ph['ui.teleport_hint'] || 'click to copy teleport') + '</div>'
+  return tip
 }
 
 function clearAllLayers () {
+  markerByCoords = {}
+
   Object.keys(markerLayers).forEach(function (k) {
     if (map.hasLayer(markerLayers[k])) map.removeLayer(markerLayers[k])
     markerLayers[k].clearLayers()
@@ -161,10 +333,18 @@ function clearAllLayers () {
   groupColors = {}
 }
 
+function isOnActiveMap(x) {
+  var cfg = mapConfigs[activeMap]
+  if (cfg.xMax !== undefined && x >= cfg.xMax) return false
+  if (cfg.xMin !== undefined && x < cfg.xMin) return false
+  return true
+}
+
 function renderMarkers (markers) {
   clearAllLayers()
 
   markers.forEach(function (marker) {
+    if (!isOnActiveMap(marker.x)) return
     if (!isOwnerInactive(marker)) return
 
     var group = 'default'
@@ -243,6 +423,7 @@ function drawData () {
     rebuildClanFilterMenu()
     return
   }
+  allMarkersData = []
   var remaining = kinds.length
   var allMarkers = []
   var lastUpdate = null
@@ -251,11 +432,16 @@ function drawData () {
     var url = kind.replace(/_/g, '/')
     $.getJSON('api/' + url, function (data) {
       if (data.update) lastUpdate = data.update
-      if (data.data) allMarkers = allMarkers.concat(data.data)
+      if (data.data) {
+        data.data.forEach(function (item) { item._kind = kind })
+        allMarkersData = allMarkersData.concat(data.data)
+        allMarkers = allMarkers.concat(data.data)
+      }
       remaining--
       if (remaining === 0) {
         if (lastUpdate) $('.lastupdate').html(lastUpdate)
         renderMarkers(allMarkers)
+        updateFilterCounts()
       }
     }).fail(function () {
       remaining--
@@ -264,20 +450,35 @@ function drawData () {
   })
 }
 
-function getOwnerById (ownerId) {
-  var owner
+function updateFilterCounts () {
+  var counts = {}
+  allMarkersData.forEach(function (item) {
+    if (!isOnActiveMap(item.x)) return
+    var k = item._kind
+    counts[k] = (counts[k] || 0) + 1
+  })
+  $('.filter-item').each(function () {
+    var id = $(this).attr('id')
+    if (!id) return
+    var kind = id.replace(/-filter$/, '')
+    var n = counts[kind]
+    $(this).find('.filter-count').text(n !== undefined ? n : '')
+  })
+}
 
+function getOwnerById (ownerId) {
+  var id = String(ownerId)
+  var owner
   playersData.find(function (player) {
-    if (player.char_id === ownerId) {
+    if (String(player.char_id) === id) {
       owner = player.char_name
       return true
     }
-    if (player.guild_id === ownerId) {
+    if (String(player.guild_id) === id) {
       owner = player.guild_name
       return true
     }
   })
-
   return owner || false
 }
 
@@ -297,14 +498,14 @@ function toggleFilter (kind) {
   // Auto-fallback to View all when all checkboxes unchecked
   if (Object.keys(activeKinds).length === 0) {
     activeKinds = { 'all': true }
-    $('.filters .dropdown-item').removeClass('active')
+    $('.filter-item').removeClass('active')
   }
   drawData()
 }
 
 function showAll () {
   activeKinds = { 'all': true }
-  $('.filters .dropdown-item').removeClass('active')
+  $('.filter-item').removeClass('active')
   drawData()
 }
 
@@ -313,12 +514,10 @@ function resetFilters () {
   clanFilter = 'all'
   inactiveDays = 0
   clusterEnabled = false
-  $('.filters .dropdown-item').removeClass('active')
+  $('.filter-item').removeClass('active')
   $('#inactive-days').val('')
   $('#cluster-toggle').prop('checked', false)
   $('#clan-filter-search').val('')
-  $('#clan-filter-menu .dropdown-item').removeClass('active')
-  $('#clan-filter-menu [data-clan="all"]').addClass('active')
   drawData()
 }
 
@@ -344,11 +543,31 @@ function createMarker(marker, group) {
     .bindTooltip(marker.tooltip, tooltipOptions)
     .on('click', onClick)
 
+  markerByCoords[marker.x + ',' + marker.y] = point
+
   if (group) {
     point.addTo(markerLayers[group])
     return
   }
   point.addTo(map)
+}
+
+function openPanel (name) {
+  var $btn = $('.sb-btn[data-panel="' + name + '"]')
+  if ($btn.hasClass('active')) {
+    closePanel()
+    return
+  }
+  closePanel()
+  $('#panel-' + name).addClass('open')
+  $btn.addClass('active')
+}
+
+function closePanel () {
+  $('.overlay-panel').removeClass('open')
+  $('.sb-btn:not(.map-btn)').removeClass('active')
+  $('#search-input').val('')
+  $('#search-results').empty()
 }
 
 function showPlayerList () {
@@ -357,7 +576,7 @@ function showPlayerList () {
     playersSearch = ''
     $('#players-search').val('')
     renderPlayerTable()
-    $('#playersList').modal()
+    openPanel('players')
   })
 }
 
@@ -395,8 +614,7 @@ function renderPlayerTable () {
 
   var html = ''
   filtered.forEach(function (player) {
-    var bgcolor = player.online == 1 ? '#FFFFAA' : '#FFFFFF'
-    html += '<tr class="player-list-item" style="background-color:' + bgcolor + '">'
+    html += '<tr class="player-list-item' + (player.online == 1 ? ' player-online-row' : '') + '">'
     html += '<td>' + escapeHtml(player.char_name) + '</td>'
     html += '<td>' + escapeHtml(player.guild_name) + '</td>'
     html += '<td>' + escapeHtml(player.rank) + '</td>'
@@ -415,11 +633,12 @@ function isOwnerInactive (marker) {
   if (!inactiveDays || inactiveDays <= 0) return true
   var lastSeen
   if (marker.guild_id) {
-    lastSeen = guildLastOnline[marker.guild_id]
+    lastSeen = guildLastOnline[String(marker.guild_id)]
   } else if (marker.char_id) {
-    lastSeen = playerLastOnline[marker.char_id]
+    lastSeen = playerLastOnline[String(marker.char_id)]
   } else if (marker.owner) {
-    lastSeen = playerLastOnline[marker.owner] || guildLastOnline[marker.owner]
+    var ownerId = String(marker.owner)
+    lastSeen = playerLastOnline[ownerId] || guildLastOnline[ownerId]
   }
   if (lastSeen == null) return true
   var thresholdMs = Date.now() - inactiveDays * 86400000
@@ -436,10 +655,12 @@ function createMarkerInCluster (marker, clusterGroup) {
   opt.markerCharId = marker.char_id || null
   opt.markerCharName = marker.char_name || ''
 
-  L.circleMarker(toLatLng(marker.x, marker.y), opt)
+  var point = L.circleMarker(toLatLng(marker.x, marker.y), opt)
     .bindTooltip(marker.tooltip, tooltipOptions)
     .on('click', onClick)
     .addTo(clusterGroup)
+
+  markerByCoords[marker.x + ',' + marker.y] = point
 }
 
 function makeClusterIcon (color) {
@@ -478,43 +699,90 @@ function clusterTooltipHtml (cluster) {
   return '<div class="cluster-tooltip"><table>' + rows + '</table></div>'
 }
 
+function getActivityInfo (lastSeen) {
+  if (!lastSeen) return { cls: 'grey', label: 'Unknown' }
+  var daysAgo = Math.floor((Date.now() - lastSeen) / 86400000)
+  if (daysAgo === 0) return { cls: 'green', label: 'Online today' }
+  if (daysAgo <= 7)  return { cls: 'green', label: daysAgo + 'd ago' }
+  if (daysAgo <= 30) return { cls: 'yellow', label: daysAgo + 'd ago' }
+  return { cls: 'grey', label: daysAgo + 'd ago' }
+}
+
 function rebuildClanFilterMenu () {
   var currentGroups = clusterEnabled ? clusterGroups : markerLayers
   var groups = Object.keys(currentGroups)
   var menu = $('#clan-filter-menu')
-  menu.find('.clan-item').remove()
+  var q = ($('#clan-filter-search').val() || '').toLowerCase()
 
-  // If the selected clan no longer exists in the current data, reset to 'all'
-  if (clanFilter !== 'all' && !currentGroups[clanFilter]) {
-    clanFilter = 'all'
-    menu.find('.dropdown-item').removeClass('active')
-    menu.find('[data-clan="all"]').addClass('active')
+  // Build group data
+  var totalCount = 0
+  var groupData = groups.map(function (id) {
+    var layers = currentGroups[id]
+    var count = layers.getLayers ? layers.getLayers().length : 0
+    totalCount += count
+    return {
+      id: id,
+      name: groupNames[id] || id,
+      color: groupColors[id] || '#666',
+      count: count,
+      lastSeen: guildLastOnline[id] || playerLastOnline[id] || null
+    }
+  })
+
+  // Sort
+  if (clanSortMode === 'name') {
+    groupData.sort(function (a, b) { return a.name.localeCompare(b.name) })
+  } else if (clanSortMode === 'activity') {
+    groupData.sort(function (a, b) { return (b.lastSeen || 0) - (a.lastSeen || 0) })
+  } else {
+    groupData.sort(function (a, b) { return b.count - a.count })
   }
 
-  groups.forEach(function (id) {
-    var name = groupNames[id] || id
-    var color = groupColors[id] || '#666'
-    var isActive = clanFilter === id
-    var item = $('<a>')
-      .addClass('dropdown-item clan-item' + (isActive ? ' active' : ''))
-      .attr('href', '#')
-      .attr('data-clan', id)
-      .html('<span class="clan-dot" style="background:' + escapeHtml(color) + '"></span>' + escapeHtml(name))
-      .on('click', function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-        selectClanFilter(id)
-      })
+  // Reset to 'all' if selected clan disappeared
+  if (clanFilter !== 'all' && !currentGroups[clanFilter]) {
+    clanFilter = 'all'
+  }
+
+  // Render
+  menu.empty()
+
+  // All clans row
+  var allLabel = (language.phrases['ui.all_clans'] || 'All clans')
+  var allItem = $('<a>')
+    .addClass('clan-item-all' + (clanFilter === 'all' ? ' active' : ''))
+    .attr('href', '#')
+    .attr('data-clan', 'all')
+    .html(escapeHtml(allLabel) + ' <span class="clan-count-badge">' + totalCount + '</span>')
+    .on('click', function (e) { e.preventDefault(); selectClanFilter('all') })
+  menu.append(allItem)
+
+  // Clan rows
+  groupData.forEach(function (g) {
+    if (q && g.name.toLowerCase().indexOf(q) === -1) return
+    var act = getActivityInfo(g.lastSeen)
+    var isActive = clanFilter === g.id
+    var item = $('<div>')
+      .addClass('clan-item-expanded' + (isActive ? ' active' : ''))
+      .attr('data-clan', g.id)
+      .html(
+        '<div class="clan-exp-top">' +
+          '<span class="clan-dot" style="background:' + escapeHtml(g.color) + '"></span>' +
+          '<span class="clan-exp-name">' + escapeHtml(g.name) + '</span>' +
+          '<span class="clan-count-badge">' + g.count + '</span>' +
+        '</div>' +
+        '<div class="clan-exp-sub">' +
+          '<span class="clan-act-dot ' + act.cls + '"></span>' +
+          '<span class="clan-act-label ' + act.cls + '">' + escapeHtml(act.label) + '</span>' +
+        '</div>'
+      )
+      .on('click', function () { selectClanFilter(g.id) })
     menu.append(item)
   })
 }
 
 function selectClanFilter (id) {
   clanFilter = id
-  $('#clan-filter-menu .dropdown-item').removeClass('active')
-  $('#clan-filter-menu .dropdown-item').each(function () {
-    if ($(this).attr('data-clan') === id) $(this).addClass('active')
-  })
+  rebuildClanFilterMenu()
   applyClanFilter()
 }
 
@@ -527,6 +795,148 @@ function applyClanFilter () {
       if (map.hasLayer(groups[id])) map.removeLayer(groups[id])
     }
   })
+}
+
+function pulseMarker (lm) {
+  lm.setStyle({ color: 'white', weight: 4 })
+  setTimeout(function () { lm.setStyle({ color: 'black', weight: 1 }) }, 2000)
+}
+
+function navigateToResult (x, y) {
+  map.panTo(toLatLng(x, y))
+  var lm = markerByCoords[x + ',' + y]
+  if (lm) pulseMarker(lm)
+}
+
+function searchTypeLabel (kind) {
+  var ph = language.phrases
+  var labels = {
+    thrall:   ph['ui.thrall']    || 'Thrall',
+    pet:      ph['ui.pet']       || 'Pet',
+    player:   ph['ui.player']    || 'Player',
+    clan:     ph['ui.guild']     || 'Guild',
+    building: ph['ui.buildings'] || 'Building'
+  }
+  return labels[kind] || kind
+}
+
+function renderSearchResult (item, type) {
+  var name, sub, badge
+
+  if (type === 'clan') {
+    name = item.name
+    sub = item.count + ' markers'
+    badge = ''
+  } else if (type === 'thrall') {
+    var parsed = parseThrallInfo(item.info)
+    name = item.name || '—'
+    sub = (parsed.faction || '') + (item.owner ? ' · ' + (getOwnerById(item.owner) || item.owner) : '')
+    badge = parsed.tier ? '<span class="badge ' + tierBadgeClass(parsed.tier) + '">' + parsed.tier + '</span>' : ''
+  } else if (type === 'pet') {
+    name = item.name || '—'
+    sub = (item.info || '') + (item.owner ? ' · ' + (getOwnerById(item.owner) || item.owner) : '')
+    badge = item.greater ? '<span class="badge badge-alpha">Alpha</span>' : ''
+  } else if (type === 'player') {
+    name = item.char_name || '—'
+    sub = item.guild_name || ''
+    badge = item.online == 1 ? '<span class="badge badge-online">● Online</span>' : ''
+  } else {
+    var translatedKind = (item.kind && language.phrases['items.' + item.kind]) || item.kind || item.class || ''
+    name = translatedKind
+    sub = item.guild_name || item.char_name || ''
+    badge = ''
+  }
+
+  var el = $('<div>').addClass('search-result')
+    .attr('data-x', item.x || null)
+    .attr('data-y', item.y || null)
+    .html(
+      '<span class="result-type">' + escapeHtml(searchTypeLabel(type)) + '</span>' +
+      '<div class="result-main">' +
+        '<div class="result-name">' + escapeHtml(name) + '</div>' +
+        (sub ? '<div class="result-sub">' + escapeHtml(sub) + '</div>' : '') +
+      '</div>' +
+      badge
+    )
+    .on('click', function () {
+      if (type === 'clan') {
+        selectClanFilter(item.id)
+      } else {
+        navigateToResult(parseFloat(item.x), parseFloat(item.y))
+      }
+      closePanel()
+    })
+  return el
+}
+
+function performSearch (query) {
+  var $results = $('#search-results')
+  $results.empty()
+  var q = (query || '').toLowerCase().trim()
+  if (!q) return
+
+  var MAX_PER_GROUP = 10
+  var groups = {
+    thralls:  { label: language.phrases['ui.thralls'] || 'Thralls',  items: [] },
+    pets:     { label: language.phrases['ui.pets']    || 'Pets',     items: [] },
+    players:  { label: language.phrases['ui.players'] || 'Players',  items: [] },
+    building: { label: language.phrases['ui.buildings'] || 'Buildings', items: [] },
+    clan:     { label: language.phrases['ui.clan_filter'] || 'Clans', items: [] }
+  }
+
+  allMarkersData.forEach(function (item) {
+    if (!isOnActiveMap(item.x)) return
+    var kind = item._kind
+    var group, fields
+
+    if (kind === 'thralls') {
+      group = groups.thralls
+      var ownerName = getOwnerById(item.owner) || ''
+      fields = [item.name, item.info, ownerName]
+    } else if (kind === 'pets') {
+      group = groups.pets
+      var ownerName = getOwnerById(item.owner) || ''
+      fields = [item.name, item.info, ownerName]
+    } else if (kind === 'players') {
+      group = groups.players
+      fields = [item.char_name, item.guild_name]
+    } else {
+      group = groups.building
+      var tKind = (item.kind && language.phrases['items.' + item.kind]) || item.kind || ''
+      fields = [tKind, item.guild_name, item.char_name]
+    }
+
+    if (group.items.length >= MAX_PER_GROUP) return
+    var matched = fields.some(function (s) { return s && String(s).toLowerCase().indexOf(q) !== -1 })
+    if (matched) group.items.push(item)
+  })
+
+  // Clan search from groupNames
+  Object.keys(groupNames).forEach(function (id) {
+    if (groups.clan.items.length >= MAX_PER_GROUP) return
+    var name = groupNames[id] || ''
+    if (name.toLowerCase().indexOf(q) !== -1) {
+      var layers = (clusterEnabled ? clusterGroups : markerLayers)[id]
+      var count = layers && layers.getLayers ? layers.getLayers().length : 0
+      groups.clan.items.push({ id: id, name: name, count: count, _clan: true })
+    }
+  })
+
+  var hasAny = false
+  var typeKeys = ['thralls', 'pets', 'players', 'building', 'clan']
+  typeKeys.forEach(function (key) {
+    var g = groups[key]
+    if (!g.items.length) return
+    hasAny = true
+    $results.append('<div class="search-group-label">' + escapeHtml(g.label) + ' (' + g.items.length + ')</div>')
+    g.items.forEach(function (item) {
+      $results.append(renderSearchResult(item, key === 'building' ? key : key.replace(/s$/, '')))
+    })
+  })
+
+  if (!hasAny) {
+    $results.html('<div class="search-empty">Nothing found</div>')
+  }
 }
 
 function getPlayers () {

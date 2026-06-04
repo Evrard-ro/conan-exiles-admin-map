@@ -13,6 +13,7 @@ const apiRoutes = (app) => {
   require('./fishnets')(app)
   require('./maprooms')(app)
   require('./pets')(app)
+  require('./thralls')(app)
   require('./pippi/all')(app)
   require('./pippi/thespians')(app)
   require('./players')(app)

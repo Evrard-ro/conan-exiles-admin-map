@@ -1,6 +1,8 @@
 export default {
 
   // Altar
+  "/Game/Systems/Building/Placeables/BP_PL_Altar_Zath.BP_PL_Altar_Zath_C": "Nido de Zath",
+  "/Game/Systems/Building/Placeables/BP_PL_Altar_Zath_T2.BP_PL_Altar_Zath_T2_C": "Templo de Zath",
   "/Game/Systems/Building/Placeables/BP_PL_Altar_Derketo.BP_PL_Altar_Derketo_C": "Antro del placer de Derketo",
   "/Game/Systems/Building/Placeables/BP_PL_Altar_Derketo_T2.BP_PL_Altar_Derketo_T2_C": "Domo del placer de Derketo",
   "/Game/Systems/Building/Placeables/BP_PL_Altar_Derketo_T3.BP_PL_Altar_Derketo_T3_C": "Palacio del placer de Derketo",
@@ -24,6 +26,8 @@ export default {
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Tier_1.BP_PL_Crafting_Station_AnimalPen_Tier_1_C": "Corral",
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Tier_2.BP_PL_Crafting_Station_AnimalPen_Tier_2_C": "Corral reforzado",
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Tier_3.BP_PL_Crafting_Station_AnimalPen_Tier_3_C": "Corral blindado",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Small.BP_PL_Crafting_Station_AnimalPen_Small_C": "Corral pequeño",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_AnimalPen_Stables.BP_PL_Crafting_Station_AnimalPen_Stables_C": "Establos",
 
   // Bed
   "/Game/Systems/Building/Placeables/BP_PL_Bed_Common.BP_PL_Bed_Common_C": "Cama",
@@ -33,10 +37,14 @@ export default {
   "/Game/Systems/Building/Placeables/BP_PL_Bed_Single_Stygian2.BP_PL_Bed_Single_Stygian2_C": "Cama estigia",
   "/Game/Systems/Building/Placeables/BP_PL_Bed_Demo.BP_PL_Bed_Demo_C": "Cama Nordheimer",
   "/Game/DLC/DLC_Aquilonia/Blueprints/BP_PL_Bed_Aquilonian.BP_PL_Bed_Aquilonian_C": "Cama individual ornamentada",
+  "/Game/DLC/DLC_Argos/Blueprints/BP_PL_Bed_Argos.BP_PL_Bed_Argos_C": "Cama argosiana",
+  "/Game/DLC/DLC_Nemedia/Blueprints/BP_PL_Bed_Double_Nemedia.BP_PL_Bed_Double_Nemedia_C": "Cama doble nemediana",
+  "/Game/DLC/DLC_RPPack/Blueprints/BP_PL_Bed_Tavern.BP_PL_Bed_Tavern_C": "Cama de taberna",
 
   // Bedroll
   "/Game/Systems/Building/Placeables/BP_PL_Bedroll_Fiber.BP_PL_Bedroll_Fiber_C": "Petate de fibra",
   "/Game/Systems/Building/Placeables/BP_PL_Bedroll_Clean.BP_PL_Bedroll_Clean_C": "Petate de cuero sin curtir",
+  "/Game/DLC/Special/blueprints/BP_PL_Bedroll_Turanian.BP_PL_Bedroll_Turanian_C": "Petate turanio",
 
   // Beehive
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_Beehive.BP_PL_Crafting_Beehive_C": "Colmena",
@@ -48,6 +56,27 @@ export default {
   "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal.BP_PL_CraftingStation_Metal_C": "Banco de herrero",
   "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal2.BP_PL_CraftingStation_Metal2_C": "Banco de herrero mejorado",
   "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood.BP_PL_CraftingStation_Wood_C": "Banco de carpintero",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood2.BP_PL_CraftingStation_Wood2_C": "Banco de carpintero mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood3_varA.BP_PL_CraftingStation_Wood3_varA_C": "Banco de carpintero mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Wood3_varB.BP_PL_CraftingStation_Wood3_varB_C": "Banco de carpintero mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Armor3_varA.BP_PL_CraftingStation_Armor3_varA_C": "Banco de armero mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Armor3_varB.BP_PL_CraftingStation_Armor3_varB_C": "Banco de armero mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal3_varA.BP_PL_CraftingStation_Metal3_varA_C": "Banco de herrero mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Metal3_varB.BP_PL_CraftingStation_Metal3_varB_C": "Banco de herrero mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Tannery3_varA.BP_PL_CraftingStation_Tannery3_varA_C": "Curtiduría mejorada",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Tannery3_varB.BP_PL_CraftingStation_Tannery3_varB_C": "Curtiduría mejorada",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Furnace3_varA.BP_PL_CraftingStation_Furnace3_varA_C": "Horno mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Furnace3_varB.BP_PL_CraftingStation_Furnace3_varB_C": "Horno mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Furnace_Kiln.BP_PL_CraftingStation_Furnace_Kiln_C": "Horno de cerámica",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Mixer3_varB.BP_PL_CraftingStation_Mixer3_varB_C": "Caldero para el fuego mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_CraftingStation_Golemancy.BP_PL_CraftingStation_Golemancy_C": "Mesa de golemancia",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Dismantler.BP_PL_Crafting_Dismantler_C": "Banco de desmontaje",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Dismantler_T2.BP_PL_Crafting_Dismantler_T2_C": "Banco de desmontaje mejorado",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_BloodStone.BP_PL_Crafting_Station_BloodStone_C": "Altar de sangre",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_ChalkCircle.BP_PL_Crafting_Station_ChalkCircle_C": "Círculo ritual",
+  "/Game/Systems/Building/Placeables/BP_PL_Crafting_Station_ShallowGrave.BP_PL_Crafting_Station_ShallowGrave_C": "Fosa superficial",
+  "/Game/DLC/Special/a2c2/items/Placeables/Blueprints/BP_PL_CraftingStation_StygianArmorerBench.BP_PL_CraftingStation_StygianArmorerBench_C": "Banco de armero estigio",
+  "/Game/DLC/Special/a3c1/Items/Placeables/Blueprints/BP_PL_CraftingStation_LiuFeiFirebowlCauldron.BP_PL_CraftingStation_LiuFeiFirebowlCauldron_C": "Caldero de Liu Fei",
 
   // Building
   "/Game/Systems/Building/BP_BuildFoundation.BP_BuildFoundation_C": "Edificio de arenisca",
@@ -66,6 +95,18 @@ export default {
   "/Game/DLC/DLC_Aquilonia/Blueprints/BP_BuildTriangleFoundation_T3_Aquilonia.BP_BuildTriangleFoundation_T3_Aquilonia_C": "Edificio aquilonio",
   "/Game/DLC/DLC_Pict/Blueprints/BP_BuildFoundation_T3_Pict.BP_BuildFoundation_T3_Pict_C": "Edificio de la frontera",
   "/Game/DLC/DLC_Pict/Blueprints/BP_BuildTriangleFoundation_T3_Pict.BP_BuildTriangleFoundation_T3_Pict_C": "Edificio de la frontera",
+  "/Game/DLC/DLC_Argos/Blueprints/BP_BuildTriangleFoundation_T3_Argos.BP_BuildTriangleFoundation_T3_Argos_C": "Edificio argosiano",
+  "/Game/DLC/DLC_BloodAndSand/Blueprints/BP_BuildTriangleFoundation_T3_BAS.BP_BuildTriangleFoundation_T3_BAS_C": "Edificio campeón de la arena",
+  "/Game/DLC/DLC_Nemedia/Blueprints/BP_BuildFoundation_T3_Nemedia.BP_BuildFoundation_T3_Nemedia_C": "Edificio nemediano",
+  "/Game/DLC/DLC_Riders/Blueprints/BP_BuildTriangleFoundation_T3_Stable.BP_BuildTriangleFoundation_T3_Stable_C": "Edificio jinetes de Hyboria",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildFoundation_T1_Salvage.BP_BuildFoundation_T1_Salvage_C": "Edificio de restos",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildTriangleFoundation_T1_Salvage.BP_BuildTriangleFoundation_T1_Salvage_C": "Edificio de restos",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildFoundation_T3_Glass.BP_BuildFoundation_T3_Glass_C": "Edificio de cristal",
+  "/Game/DLC/DLC_Siptah/Systems/Building/BP_BuildTriangleFoundation_T3_Glass.BP_BuildTriangleFoundation_T3_Glass_C": "Edificio de cristal",
+  "/Game/DLC/DLC_Turan/Blueprints/BP_BuildFoundation_T3_Turan.BP_BuildFoundation_T3_Turan_C": "Edificio turanio",
+  "/Game/DLC/DLC_Turan/Blueprints/BP_BuildTriangleFoundation_T3_Turan.BP_BuildTriangleFoundation_T3_Turan_C": "Edificio turanio",
+  "/Game/DLC/DLC_Yamatai/Blueprints/BP_BuildFoundation_T3_Japan.BP_BuildFoundation_T3_Japan_C": "Edificio yamatai",
+  "/Game/DLC/DLC_Yamatai/Blueprints/BP_BuildTriangleFoundation_T3_Japan.BP_BuildTriangleFoundation_T3_Japan_C": "Edificio yamatai",
 
   // Campfire
   "/Game/Systems/Building/Placeables/BP_PL_Crafting_CampFire.BP_PL_Crafting_CampFire_C": "Hoguera",
@@ -75,6 +116,7 @@ export default {
   // Chest
   "/Game/Systems/Building/Placeables/BP_PL_Chest_Large_Cupboard.BP_PL_Chest_Large_Cupboard_C": "Aparador",
   "/Game/Systems/Building/Placeables/BP_PL_Chest_Medium.BP_PL_Chest_Medium_C": "Caja de madera",
+  "/Game/Systems/Building/Placeables/BP_PL_Chest_Medium2.BP_PL_Chest_Medium2_C": "Cofre decorado",
   "/Game/Systems/Building/Placeables/BP_PL_Chest_Large.BP_PL_Chest_Large_C": "Cofre grande",
 
   // Compost Heap
