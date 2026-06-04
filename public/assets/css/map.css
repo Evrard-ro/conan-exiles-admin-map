@@ -561,3 +561,77 @@ html, body {
   z-index: 1000;
   letter-spacing: 0.02em;
 }
+
+/* ── Server switcher ── */
+#servers-list { display: flex; flex-direction: column; }
+
+.server-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(200,134,10,0.08);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-left: 3px solid transparent;
+}
+.server-item:hover { background: rgba(200,134,10,0.06); }
+.server-item.server-active {
+  background: rgba(200,134,10,0.10);
+  border-left-color: #c8860a;
+}
+
+.server-radio {
+  font-size: 0.85rem;
+  color: #4a3818;
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+  transition: color 0.15s;
+}
+.server-item.server-active .server-radio { color: #c8860a; }
+
+.server-info { flex: 1; min-width: 0; }
+
+.server-name {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: #c8a060;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+.server-item.server-active .server-name { color: #e8c87a; }
+
+.server-ago {
+  display: block;
+  font-family: 'Crimson Text', serif;
+  font-size: 0.75rem;
+  color: #4a3818;
+  margin-top: 1px;
+}
+
+.server-refresh-btn {
+  flex-shrink: 0;
+  background: rgba(200,134,10,0.10);
+  border: 1px solid rgba(200,134,10,0.25);
+  border-radius: 3px;
+  color: #7a5828;
+  font-size: 1rem;
+  line-height: 1;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.server-refresh-btn:hover:not(:disabled) {
+  background: rgba(200,134,10,0.25);
+  border-color: rgba(200,134,10,0.5);
+  color: #d4b896;
+}
+.server-refresh-btn:disabled { opacity: 0.35; cursor: not-allowed; }

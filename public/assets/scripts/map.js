@@ -104,11 +104,16 @@ function renderServersList (servers) {
   servers.forEach(function (s) {
     var ago = s.timestamp ? timeSince(new Date(s.timestamp)) : 'never'
     var active = s.id === activeServerId ? ' server-active' : ''
-    html += '<div class="server-item' + active + '">'
+    var sid = JSON.stringify(s.id).replace(/"/g, '&quot;')
+    html += '<div class="server-item' + active + '" onclick="selectServer(' + sid + ')">'
     html += '<span class="server-radio">' + (s.id === activeServerId ? '◉' : '○') + '</span>'
-    html += '<span class="server-name" onclick="selectServer(' + JSON.stringify(s.id).replace(/"/g, '&quot;') + ')">' + escapeHtml(s.name) + '</span>'
-    html += '<span class="server-ago">updated ' + ago + '</span>'
-    html += '<button class="server-refresh-btn" onclick="refreshServer(' + JSON.stringify(s.id).replace(/"/g, '&quot;') + ')"' + (s.refreshing ? ' disabled' : '') + '>Refresh</button>'
+    html += '<div class="server-info">'
+    html += '<span class="server-name">' + escapeHtml(s.name) + '</span>'
+    html += '<span class="server-ago">' + ago + '</span>'
+    html += '</div>'
+    var refreshing = s.refreshing ? ' disabled' : ''
+    var refreshLabel = s.refreshing ? '…' : '↺'
+    html += '<button class="server-refresh-btn" onclick="event.stopPropagation();refreshServer(' + sid + ')"' + refreshing + '>' + refreshLabel + '</button>'
     html += '</div>'
   })
   $('#servers-list').html(html)
