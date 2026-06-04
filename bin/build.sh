@@ -13,5 +13,9 @@ npx --yes @yao-pkg/pkg lib/conan-exiles-admin-map.js -t node24-win-x64 --out-pat
 rm -rf lib
 cd build
 cp ../src/conan-exiles-admin-map.ini .
-powershell -Command "Compress-Archive -Path * -DestinationPath conan-exiles-admin-map-v${PACKAGE_VERSION}.zip -Force"
+if command -v zip &>/dev/null; then
+  zip -r "conan-exiles-admin-map-v${PACKAGE_VERSION}.zip" .
+else
+  powershell -Command "Compress-Archive -Path * -DestinationPath conan-exiles-admin-map-v${PACKAGE_VERSION}.zip -Force"
+fi
 cd ..
