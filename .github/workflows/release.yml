@@ -27,6 +27,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Download Windows prebuilt for better-sqlite3
+        run: |
+          VERSION=$(node -p "require('./node_modules/better-sqlite3/package.json').version")
+          NAPI_VER=$(node -p "process.versions.napi")
+          DEST=node_modules/better-sqlite3
+          for napi in $NAPI_VER 9 8 7 6; do
+            URL="https://github.com/WiseLibs/better-sqlite3/releases/download/v${VERSION}/better-sqlite3-v${VERSION}-napi-v${napi}-win32-x64.tar.gz"
+            echo "Trying NAPI v${napi}: $URL"
+            if curl -sfL "$URL" | tar -xz -C "$DEST"; then
+              echo "OK: downloaded NAPI v${napi}"
+              break
+            fi
+          done
+
       - name: Build
         run: npm run build
 
