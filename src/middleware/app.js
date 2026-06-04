@@ -3,7 +3,7 @@ import config from '../config'
 
 const applicationMiddleware = (app) => {
 
-  app.set('port', config.SETTINGS.port)
+  app.set('port', config.settings.port)
 
   app.set('rootFolder', path.join(__dirname, '../../'))
   app.set('view engine', 'ejs')
