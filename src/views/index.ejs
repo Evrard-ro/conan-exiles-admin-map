@@ -27,6 +27,7 @@
           <button class="sb-btn" data-panel="filters" title="<%= lang['ui.filters'] %>">◈</button>
           <button class="sb-btn" data-panel="search" title="<%= lang['ui.search'] %>">🔍</button>
           <button class="sb-btn" data-panel="clans" title="<%= lang['ui.clan_filter'] %>">⚑</button>
+          <button class="sb-btn" data-panel="servers" title="Servers">🖥</button>
         </div>
         <div class="sidebar-spacer"></div>
         <div class="map-switch">
@@ -102,6 +103,17 @@
           </div>
         </div>
 
+        <!-- Servers panel -->
+        <div id="panel-servers" class="overlay-panel">
+          <div class="panel-header">
+            <span class="panel-title">Servers</span>
+            <button class="panel-close">✕</button>
+          </div>
+          <div class="panel-body">
+            <div id="servers-list"></div>
+          </div>
+        </div>
+
         <!-- Players panel -->
         <div id="panel-players" class="overlay-panel overlay-panel--wide">
           <div class="panel-header">
@@ -157,7 +169,7 @@
         </div>
 
         <!-- Status bar -->
-        <div id="status-bar"><%= lang['ui.last_update'] %><span class="lastupdate"><%= lastupdate %></span></div>
+        <div id="status-bar"><%= lang['ui.last_update'] %><span class="lastupdate"></span></div>
         <div id="coord-debug" style="display:none"><span id="coord-text">—</span></div>
 
       </div>

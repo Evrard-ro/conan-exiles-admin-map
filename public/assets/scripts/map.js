@@ -34,6 +34,7 @@ var clanSortMode = 'count'
 var inactiveDays = 0
 var clusterEnabled = false
 var clusterGroups = {}
+var activeServerId = null
 var allMarkersData = []
 var markerByCoords = {}
 var playerLastOnline = {}
@@ -79,6 +80,81 @@ function fromLatLng(lat, lng) {
     x: Math.round(convertRange(lng, boundsX, cfg.rangeX)),
     y: Math.round(convertRange(lat, boundsY, cfg.rangeY))
   }
+}
+
+function loadServers () {
+  $.getJSON('api/servers', function (servers) {
+    if (!servers || !servers.length) {
+      toastr.error('No servers available. Check your configuration.')
+      return
+    }
+    renderServersList(servers)
+    if (servers.length === 1) {
+      selectServer(servers[0].id)
+    } else {
+      openPanel('servers')
+    }
+  }).fail(function () {
+    toastr.error('Failed to load server list.')
+  })
+}
+
+function renderServersList (servers) {
+  var html = ''
+  servers.forEach(function (s) {
+    var ago = s.timestamp ? timeSince(new Date(s.timestamp)) : 'never'
+    var active = s.id === activeServerId ? ' server-active' : ''
+    html += '<div class="server-item' + active + '">'
+    html += '<span class="server-radio">' + (s.id === activeServerId ? '◉' : '○') + '</span>'
+    html += '<span class="server-name" onclick="selectServer(\'' + escapeHtml(s.id) + '\')">' + escapeHtml(s.name) + '</span>'
+    html += '<span class="server-ago">updated ' + ago + '</span>'
+    html += '<button class="server-refresh-btn" onclick="refreshServer(\'' + escapeHtml(s.id) + '\')"' + (s.refreshing ? ' disabled' : '') + '>Refresh</button>'
+    html += '</div>'
+  })
+  $('#servers-list').html(html)
+}
+
+function timeSince (date) {
+  var seconds = Math.floor((new Date() - date) / 1000)
+  if (seconds < 60) return 'just now'
+  var minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return minutes + ' min. ago'
+  var hours = Math.floor(minutes / 60)
+  if (hours < 24) return hours + ' h. ago'
+  return Math.floor(hours / 24) + ' d. ago'
+}
+
+function selectServer (serverId) {
+  activeServerId = serverId
+  closePanel()
+  getPlayers()
+  showAll()
+}
+
+function refreshServer (serverId) {
+  $.ajax({
+    url: 'api/' + serverId + '/refresh',
+    method: 'POST',
+    success: function (data) {
+      toastr.success('Server data updated')
+      if (serverId === activeServerId) {
+        getPlayers()
+        showAll()
+      }
+      $.getJSON('api/servers', function (servers) { renderServersList(servers) })
+    },
+    error: function (xhr) {
+      var body = xhr.responseJSON || {}
+      if (xhr.status === 429) {
+        var mins = Math.ceil((body.retryAfter || 0) / 60)
+        toastr.warning('Next refresh available in ' + mins + ' min.')
+      } else if (xhr.status === 409) {
+        toastr.info('Refresh already in progress.')
+      } else {
+        toastr.error('Refresh failed.')
+      }
+    }
+  })
 }
 
 function init() {
@@ -219,8 +295,7 @@ function init() {
     }
   }, true)
 
-  getPlayers()
-  showAll()
+  loadServers()
 }
 
 function switchMap(name) {
@@ -417,6 +492,7 @@ function renderMarkers (markers) {
 }
 
 function drawData () {
+  if (!activeServerId) return
   var kinds = Object.keys(activeKinds)
   if (kinds.length === 0) {
     clearAllLayers()
@@ -430,7 +506,7 @@ function drawData () {
 
   kinds.forEach(function (kind) {
     var url = kind.replace(/_/g, '/')
-    $.getJSON('api/' + url, function (data) {
+    $.getJSON('api/' + activeServerId + '/' + url, function (data) {
       if (data.update) lastUpdate = data.update
       if (data.data) {
         data.data.forEach(function (item) { item._kind = kind })
@@ -571,7 +647,7 @@ function closePanel () {
 }
 
 function showPlayerList () {
-  $.getJSON('api/players', function (data) {
+  $.getJSON('api/' + activeServerId + '/players', function (data) {
     playersData = data.data
     playersSearch = ''
     $('#players-search').val('')
@@ -940,7 +1016,8 @@ function performSearch (query) {
 }
 
 function getPlayers () {
-  $.getJSON('api/players', function (data) {
+  if (!activeServerId) return
+  $.getJSON('api/' + activeServerId + '/players', function (data) {
     playersData = data.data
     playerLastOnline = {}
     guildLastOnline = {}
