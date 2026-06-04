@@ -6,7 +6,13 @@
   "scripts": {
     "start": "babel-node src/conan-exiles-admin-map.js",
     "build": "bin/build.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --no-coverage"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "testEnvironment": "node"
   },
   "author": "Germán Robledo Curiel <germix@germix.net>",
   "license": "MIT",
@@ -25,7 +31,10 @@
     "@babel/core": "^7.25.9",
     "@babel/node": "^7.25.9",
     "@babel/preset-env": "^7.25.9",
-    "@yao-pkg/pkg": "^6.20.0"
+    "@yao-pkg/pkg": "^6.20.0",
+    "babel-jest": "^30.4.1",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   },
   "pkg": {
     "assets": [
