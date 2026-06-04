@@ -47,4 +47,5 @@ __pycache__/
 
 # Reference / working images at project root
 *.jpg
-*.jpegdocs/DATA-MAP.md
+*.jpeg
+docs/DATA-MAP.md
