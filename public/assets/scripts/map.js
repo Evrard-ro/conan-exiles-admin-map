@@ -106,9 +106,9 @@ function renderServersList (servers) {
     var active = s.id === activeServerId ? ' server-active' : ''
     html += '<div class="server-item' + active + '">'
     html += '<span class="server-radio">' + (s.id === activeServerId ? '◉' : '○') + '</span>'
-    html += '<span class="server-name" onclick="selectServer(' + JSON.stringify(s.id) + ')">' + escapeHtml(s.name) + '</span>'
+    html += '<span class="server-name" onclick="selectServer(' + JSON.stringify(s.id).replace(/"/g, '&quot;') + ')">' + escapeHtml(s.name) + '</span>'
     html += '<span class="server-ago">updated ' + ago + '</span>'
-    html += '<button class="server-refresh-btn" onclick="refreshServer(' + JSON.stringify(s.id) + ')"' + (s.refreshing ? ' disabled' : '') + '>Refresh</button>'
+    html += '<button class="server-refresh-btn" onclick="refreshServer(' + JSON.stringify(s.id).replace(/"/g, '&quot;') + ')"' + (s.refreshing ? ' disabled' : '') + '>Refresh</button>'
     html += '</div>'
   })
   $('#servers-list').html(html)
