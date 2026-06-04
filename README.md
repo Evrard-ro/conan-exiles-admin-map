@@ -34,14 +34,16 @@ An admin dashboard for Conan Exiles servers — view players, structures and thr
 - Dark fantasy sidebar UI
 - Fast tile loading via WebP tiles and long-term browser caching
 - Password-protect access via config file (Basic Auth)
+- **System tray icon** — stop the server from the tray without Task Manager
+- **Browser auto-opens** on startup
 
 ## Installation
 
 1. Grab the latest `.zip` from the [Releases](https://github.com/Evrard-ro/conan-exiles-admin-map/releases) page.
 2. Unzip into your Conan Exiles `Saved/` folder (next to `game.db`).
 3. Edit `conan-exiles-admin-map.ini` to set your database path, port, language and optional credentials.
-4. Run `conan-exiles-admin-map.exe`.
-5. Open `http://localhost:3001/` in a browser (replace `localhost` with your server IP if remote).
+4. Run `conan-exiles-admin-map.exe` — the browser opens automatically and a tray icon appears.
+5. To stop the server use the tray icon → **Stop server** (or close from Task Manager if needed).
 
 ### Configuration (`conan-exiles-admin-map.ini`)
 
@@ -77,6 +79,11 @@ npm run build    # outputs build/conan-exiles-admin-map-vX.Y.Z.zip
 ```
 
 ## Changelog
+
+#### v0.4.1 (June 2026)
+
+- System tray icon with "Open in browser" and "Stop server" actions
+- Browser opens automatically on startup
 
 #### v0.4.0 (June 2026)
 
