@@ -127,7 +127,7 @@ After building, edit `build/conan-exiles-admin-map.ini` to point `database` at y
 
 ## Changelog
 
-#### v0.5.0 (June 2026)
+#### v0.4.2 (June 2026)
 
 - **Multi-server support** — define any number of `[SERVER_<id>]` sections; switch between them from the new Servers panel
 - **Snapshot-based data loading** — data is read from `game.db` only when you click Refresh; snapshots are cached to disk so restarts are instant
