@@ -1,6 +1,7 @@
 # Project
 build/
 lib/
+snapshots/
 node_modules/
 game.db*
 *.db
