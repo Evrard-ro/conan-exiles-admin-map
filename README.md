@@ -76,22 +76,6 @@ Requires bash / WSL:
 npm run build    # outputs build/conan-exiles-admin-map-vX.Y.Z.zip
 ```
 
-### Regenerate map tiles
-
-If you need to rebuild zoom levels 2–5 from the zoom-6 source tiles:
-
-```bash
-pip install Pillow
-python tools/retile.py            # Exiled Lands
-python tools/retile.py --siptah   # Isle of Siptah
-```
-
-To convert tiles to WebP (run after retile if adding new tiles):
-
-```bash
-python tools/to_webp.py --delete-png
-```
-
 ## Changelog
 
 #### v0.4.0 (June 2026)
