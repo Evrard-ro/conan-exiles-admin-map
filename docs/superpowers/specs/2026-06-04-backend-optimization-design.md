@@ -93,21 +93,20 @@ admin2:pass:server2
 ```js
 {
   serverId: 'server1',
-  timestamp: '2026-06-04T12:00:00.000Z',
+  timestamp: '2026-06-04T12:00:00.000Z',  // ISO string
   refreshing: false,
   data: {
     players: [...],
-    buildings: [...],
     altars: [...],
     animalpens: [...],
     beds: [...],
+    buildings: [...],
     campfires: [...],
     chests: [...],
-    crabPots: [...],
+    crabPots: [...],       // camelCase — совпадает с ключами в sql.js
     crafting: [...],
     fishNets: [...],
     mapRooms: [...],
-    maprooms: [...],
     pets: [...],
     thralls: [...],
     thrones: [...],
@@ -147,28 +146,45 @@ admin2:pass:server2
 ```js
 const { servers } = res.locals.user
 const { serverId } = req.params
+if (!config.servers.find(s => s.id === serverId)) → 404 (сервер не найден в конфиге)
 if (servers[0] !== '*' && !servers.includes(serverId)) → 403
-if (!snapshotService.get(serverId)) → 404 (сервер не найден в конфиге)
 next()
 ```
 
+Важно: 404 проверяется по `config.servers`, а не по наличию снапшота — сервер может существовать, но ещё не иметь снапшота (до первого refresh).
+
 ### 5. API Routes — `src/routes/api/index.js` (переписан)
 
-Один файл вместо ~20. Фабрика маршрутов для стандартных сущностей:
+Один файл вместо ~20. Фабрика маршрутов использует явный маппинг `url → dataKey`, чтобы развязать URL-путь (lowercase) от camelCase-ключей снапшота:
 
 ```js
-const entities = [
-  'altars', 'animalpens', 'beds', 'buildings', 'campfires',
-  'chests', 'crabpots', 'crafting', 'fishnets', 'maprooms',
-  'pets', 'players', 'thralls', 'thrones', 'trebuchets',
-  'vaults', 'waterwells', 'wheelsofpain',
-  'pippi/all', 'pippi/thespians'
+const entityRoutes = [
+  { path: 'altars',          key: 'altars' },
+  { path: 'animalpens',      key: 'animalpens' },
+  { path: 'beds',            key: 'beds' },
+  { path: 'buildings',       key: 'buildings' },
+  { path: 'campfires',       key: 'campfires' },
+  { path: 'chests',          key: 'chests' },
+  { path: 'crabpots',        key: 'crabPots' },
+  { path: 'crafting',        key: 'crafting' },
+  { path: 'fishnets',        key: 'fishNets' },
+  { path: 'maprooms',        key: 'mapRooms' },
+  { path: 'pets',            key: 'pets' },
+  { path: 'players',         key: 'players' },
+  { path: 'thralls',         key: 'thralls' },
+  { path: 'thrones',         key: 'thrones' },
+  { path: 'trebuchets',      key: 'trebuchets' },
+  { path: 'vaults',          key: 'vaults' },
+  { path: 'waterwells',      key: 'waterWells' },
+  { path: 'wheelsofpain',    key: 'wheelsOfPain' },
+  { path: 'pippi/all',       key: 'pippiAll' },
+  { path: 'pippi/thespians', key: 'pippiThespians' },
 ]
 
-entities.forEach(entity => {
-  router.get(`/:serverId/${entity}`, serverAccess, (req, res) => {
+entityRoutes.forEach(({ path, key }) => {
+  router.get(`/:serverId/${path}`, serverAccess, (req, res) => {
     const snap = snapshotService.get(req.params.serverId)
-    res.json(snap.data[entity] ?? [])
+    res.json(snap?.data[key] ?? [])
   })
 })
 ```
@@ -176,10 +192,12 @@ entities.forEach(entity => {
 **Дополнительные эндпоинты:**
 
 ```
-GET  /api/servers
-  → список { id, name, timestamp, refreshing } только для серверов пользователя
+GET  /api/servers                        (требует auth)
+  → список { id, name, timestamp | null, refreshing }
+    только для серверов пользователя;
+    timestamp = null если снапшот ещё не создавался
 
-POST /api/:serverId/refresh
+POST /api/:serverId/refresh              (требует auth + serverAccess)
   → запуск обновления
   → 200 { timestamp } при успехе
   → 429 { retryAfter } если cooldown не истёк
