@@ -12,14 +12,14 @@ var mapConfigs = {
     label: 'Exiled Lands',
     rangeX: [-296000, 412000],
     rangeY: [-292000, 353500],
-    tiles: 'assets/tiles/{z}/{x}/{y}.png',
+    tiles: 'assets/tiles/{z}/{x}/{y}.webp',
     xMax: 800000
   },
   siptah: {
     label: 'Isle of Siptah',
     rangeX: [1118122, 1979015],
     rangeY: [-263282, 528457],
-    tiles: 'assets/tiles-siptah/{z}/{x}/{y}.png',
+    tiles: 'assets/tiles-siptah/{z}/{x}/{y}.webp',
     xMin: 1000000
   }
 }
