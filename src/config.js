@@ -9,9 +9,10 @@ const DEFAULT_LANGUAGE = 'en'
 export function parseConfig(rawIni) {
   const parsed = ini.parse(rawIni)
 
+  const parsedPort = parseInt(parsed.SETTINGS?.port, 10)
   const settings = {
     language: parsed.SETTINGS?.language || DEFAULT_LANGUAGE,
-    port: parseInt(parsed.SETTINGS?.port, 10) || DEFAULT_PORT
+    port: Number.isFinite(parsedPort) ? parsedPort : DEFAULT_PORT
   }
 
   const servers = []
@@ -19,11 +20,12 @@ export function parseConfig(rawIni) {
     if (key.startsWith('SERVER_')) {
       const id = key.slice(7)
       const sec = parsed[key]
+      const parsedCooldown = parseInt(sec.refresh_cooldown, 10)
       servers.push({
         id,
         name: sec.name || id,
         database: (sec.database || '').replace(/\\/g, '/'),
-        refreshCooldown: parseInt(sec.refresh_cooldown, 10) || DEFAULT_COOLDOWN
+        refreshCooldown: Number.isFinite(parsedCooldown) ? parsedCooldown : DEFAULT_COOLDOWN
       })
     }
   }

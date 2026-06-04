@@ -70,4 +70,19 @@ multi = pass:s1,s2
     expect(cfg.settings.port).toBe(3001)
     expect(cfg.settings.language).toBe('en')
   })
+
+  test('returns safe defaults when given empty string', () => {
+    const cfg = parseConfig('')
+    expect(cfg.settings.port).toBe(3001)
+    expect(cfg.settings.language).toBe('en')
+    expect(cfg.servers).toEqual([])
+    expect(cfg.users.size).toBe(0)
+  })
+
+  test('returns empty users map when USERS section is absent', () => {
+    const raw = `[SERVER_s1]\ndatabase = /db.db`
+    const cfg = parseConfig(raw)
+    expect(cfg.users).toBeInstanceOf(Map)
+    expect(cfg.users.size).toBe(0)
+  })
 })
