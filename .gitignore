@@ -38,3 +38,13 @@ Desktop.ini
 # Claude Code
 CLAUDE.md
 .claude/
+.superpowers/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Reference / working images at project root
+*.jpg
+*.jpeg
