@@ -9,7 +9,7 @@ PACKAGE_VERSION=$(cat package.json \
 rm -rf lib build
 babel src --out-dir lib
 cp -rf src/views lib/views
-pkg lib/conan-exiles-admin-map.js -t latest-win-x64 --out-path build -c package.json
+npx --yes @yao-pkg/pkg lib/conan-exiles-admin-map.js -t latest-win-x64 --out-path build -c package.json
 rm -rf lib
 cd build
 mv conan-exiles-admin-map-win.exe conan-exiles-admin-map.exe

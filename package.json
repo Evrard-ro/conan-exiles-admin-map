@@ -25,7 +25,7 @@
     "@babel/core": "^7.25.9",
     "@babel/node": "^7.25.9",
     "@babel/preset-env": "^7.25.9",
-    "pkg": "^4.3.4"
+    "@yao-pkg/pkg": "^6.20.0"
   },
   "pkg": {
     "assets": [
