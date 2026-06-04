@@ -65,5 +65,12 @@ export default function buildApiRouter() {
 
 export const apiRoutes = (app) => {
   snapshotService.load()
+  for (const server of config.servers) {
+    if (!snapshotService.get(server.id)) {
+      snapshotService.refresh(server.id).catch(e => {
+        console.error(`Auto-refresh failed for ${server.id}:`, e.message)
+      })
+    }
+  }
   app.use('/api', buildApiRouter())
 }
