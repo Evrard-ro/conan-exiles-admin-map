@@ -1,25 +1,25 @@
 import auth from 'basic-auth'
 import config from '../config'
 
-const authMiddleware = (app) => {
+export function createAuthMiddleware(users) {
+  return (req, res, next) => {
+    if (!users.size) return next()
 
-  const users = config.USERS
+    const credentials = auth(req)
+    const entry = credentials ? users.get(credentials.name) : null
 
-  app.use((req, res, next) => {
-    const user = auth(req)
-
-    if (!Object.keys(users).length) {
-      return next()
-    }
-
-    if (!user || !users[user.name] || users[user.name] !== user.pass) {
+    if (!entry || entry.password !== credentials?.pass) {
       res.setHeader('WWW-Authenticate', 'Basic realm="ConanExilesAdminMap"')
       return res.status(401).send('Unauthorized')
     }
 
+    res.locals.user = { username: credentials.name, servers: entry.servers }
     return next()
-  })
+  }
+}
 
+const authMiddleware = (app) => {
+  app.use(createAuthMiddleware(config.users))
 }
 
 export default authMiddleware
