@@ -40,7 +40,8 @@
     "assets": [
       "lib/views/**/*",
       "public/**/*",
-      "node_modules/systray2/traybin/tray_windows_release.exe"
+      "node_modules/systray2/traybin/tray_windows_release.exe",
+      "node_modules/better-sqlite3/build/Release/better_sqlite3.node"
     ]
   }
 }

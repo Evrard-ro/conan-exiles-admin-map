@@ -9,11 +9,9 @@ PACKAGE_VERSION=$(cat package.json \
 rm -rf lib build
 babel src --out-dir lib
 cp -rf src/views lib/views
-npx --yes @yao-pkg/pkg lib/conan-exiles-admin-map.js -t latest-win-x64 --out-path build -c package.json
+npx --yes @yao-pkg/pkg lib/conan-exiles-admin-map.js -t node24-win-x64 --out-path build -c package.json
 rm -rf lib
 cd build
-mv conan-exiles-admin-map-win.exe conan-exiles-admin-map.exe
 cp ../src/conan-exiles-admin-map.ini .
-cp ../src/bindings/win_x64/node_sqlite3.node .
-zip -r conan-exiles-admin-map-v$PACKAGE_VERSION.zip .
+powershell -Command "Compress-Archive -Path * -DestinationPath conan-exiles-admin-map-v${PACKAGE_VERSION}.zip -Force"
 cd ..
