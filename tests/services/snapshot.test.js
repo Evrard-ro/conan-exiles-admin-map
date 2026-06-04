@@ -54,6 +54,31 @@ describe('snapshotService', () => {
     })
   })
 
+  test('load() does nothing when snapshots directory does not exist', () => {
+    existsSync.mockReturnValue(false)
+    service.load()
+    expect(service.get('s1')).toBeNull()
+  })
+
+  test('load() restores snapshots from disk', () => {
+    const savedSnap = {
+      serverId: 's1',
+      timestamp: '2026-01-01T00:00:00.000Z',
+      data: { players: [], altars: [] }
+    }
+    existsSync.mockReturnValue(true)
+    readdirSync.mockReturnValue(['s1.json'])
+    readFileSync.mockReturnValue(JSON.stringify(savedSnap))
+
+    service.load()
+
+    const snap = service.get('s1')
+    expect(snap).not.toBeNull()
+    expect(snap.serverId).toBe('s1')
+    expect(snap.timestamp).toBe('2026-01-01T00:00:00.000Z')
+    expect(snap.refreshing).toBe(false)
+  })
+
   test('get() returns snapshot after successful refresh', async () => {
     const mockDb = {
       prepare: jest.fn().mockReturnValue({ all: jest.fn().mockReturnValue([]) }),

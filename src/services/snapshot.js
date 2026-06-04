@@ -3,6 +3,7 @@ import { writeFileSync, mkdirSync, existsSync, readFileSync, readdirSync } from 
 import { join } from 'path'
 import { SmartBuffer } from 'smart-buffer'
 import queries from '../config/sql'
+import config from '../config'
 
 const SNAPSHOTS_DIR = join(process.cwd(), 'snapshots')
 
@@ -152,32 +153,34 @@ export function createSnapshotService(servers) {
     try {
       const db = new Database(serverCfg.database, { readonly: true })
       const run = sql => db.prepare(sql).all()
-
-      const data = {
-        all:            addKind(run(queries.all)),
-        altars:         addKind(run(queries.altars)),
-        animalpens:     addKind(run(queries.animalpens)),
-        beds:           addKind(run(queries.beds)),
-        buildings:      addKind(run(queries.buildings)),
-        campfires:      addKind(run(queries.campfires)),
-        chests:         addKind(run(queries.chests)),
-        crabPots:       addKind(run(queries.crabPots)),
-        crafting:       addKind(run(queries.crafting)),
-        fishNets:       addKind(run(queries.fishNets)),
-        mapRooms:       addKind(run(queries.mapRooms)),
-        thrones:        addKind(run(queries.thrones)),
-        trebuchets:     addKind(run(queries.trebuchets)),
-        vaults:         addKind(run(queries.vaults)),
-        waterWells:     addKind(run(queries.waterWells)),
-        wheelsOfPain:   addKind(run(queries.wheelsOfPain)),
-        pippiAll:       addKind(run(queries.pippiAll)),
-        players:        transformPlayers(run(queries.players)),
-        pets:           transformPets(run(queries.pets)),
-        thralls:        transformThralls(run(queries.thralls)),
-        pippiThespians: transformPippiThespians(run(queries.pippiThespians)),
+      let data
+      try {
+        data = {
+          all:            addKind(run(queries.all)),
+          altars:         addKind(run(queries.altars)),
+          animalpens:     addKind(run(queries.animalpens)),
+          beds:           addKind(run(queries.beds)),
+          buildings:      addKind(run(queries.buildings)),
+          campfires:      addKind(run(queries.campfires)),
+          chests:         addKind(run(queries.chests)),
+          crabPots:       addKind(run(queries.crabPots)),
+          crafting:       addKind(run(queries.crafting)),
+          fishNets:       addKind(run(queries.fishNets)),
+          mapRooms:       addKind(run(queries.mapRooms)),
+          thrones:        addKind(run(queries.thrones)),
+          trebuchets:     addKind(run(queries.trebuchets)),
+          vaults:         addKind(run(queries.vaults)),
+          waterWells:     addKind(run(queries.waterWells)),
+          wheelsOfPain:   addKind(run(queries.wheelsOfPain)),
+          pippiAll:       addKind(run(queries.pippiAll)),
+          players:        transformPlayers(run(queries.players)),
+          pets:           transformPets(run(queries.pets)),
+          thralls:        transformThralls(run(queries.thralls)),
+          pippiThespians: transformPippiThespians(run(queries.pippiThespians)),
+        }
+      } finally {
+        db.close()
       }
-
-      db.close()
 
       const timestamp = new Date().toISOString()
       const snap = { serverId, timestamp, refreshing: false, data }
@@ -196,6 +199,5 @@ export function createSnapshotService(servers) {
   return { load, get, refresh, _snapshots }
 }
 
-import config from '../config'
 const snapshotService = createSnapshotService(config.servers)
 export default snapshotService
