@@ -25,15 +25,15 @@ jobs:
         run: npm ci
 
       - name: Build
+        run: npm run build
         shell: bash
-        run: bash bin/build.sh
 
       - name: Get version
-        shell: bash
+        id: pkg_version
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-        id: pkg_version
+        shell: bash
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
