@@ -3,6 +3,7 @@ build/
 lib/
 snapshots/
 node_modules/
+coverage/
 game.db*
 *.db
 *.db-shm
@@ -23,6 +24,7 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # OS
 .DS_Store
@@ -46,7 +48,7 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Reference / working images at project root
-*.jpg
-*.jpeg
+# Reference / working images at project root only
+/*.jpg
+/*.jpeg
 docs/DATA-MAP.md
