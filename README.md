@@ -127,6 +127,23 @@ After building, edit `build/conan-exiles-admin-map.ini` to point `database` at y
 
 ## Changelog
 
+#### v0.4.3 (September 2026)
+
+- **Drastic map loading speedup** — fixed `minNativeZoom` configuration bug in Leaflet so zoom 2 loads only 16 tiles instead of thousands; enabled tile memory buffer (`keepBuffer: 2`) and removed `updateWhenIdle` pan lag.
+- **Local offline vendor assets** — bundled Leaflet, MarkerCluster, jQuery, Toastr, and Clipboard locally in `public/assets/vendor/`; removed external CDN dependencies and made Google Fonts non-blocking for full offline/intranet support.
+- **Database & Query fixes**:
+  - Fixed `players` query join with `account` table (`account.id = characters.playerId`); restored real online player indicator and real 64-bit Steam IDs (`platformId`).
+  - Added dancers and entertainers (`EntertainerHumanoidNPC`) to the `thralls` layer.
+  - Added mount companions (`Mounts`: horses, camels, rhinos) to the `pets` layer.
+  - Added 5-second busy timeout to SQLite connections to prevent lock errors while the game server is committing transactions.
+- **Security & Stability**:
+  - Protected HTTP Basic Auth against timing attacks using `crypto.timingSafeEqual`.
+  - Non-blocking snapshot refresh: yields event loop between queries to maintain server responsiveness.
+  - Fixed server access permission check for wildcard (`*`) anywhere in user permissions.
+  - Escaped single quotes in `escapeHtml` to prevent inline attribute injection.
+  - Added graceful `EADDRINUSE` error message if port is already taken.
+  - Removed obsolete 2018 SQLite native binary from repository.
+
 #### v0.4.2 (June 2026)
 
 - **Multi-server support** — define any number of `[SERVER_<id>]` sections; switch between them from the new Servers panel

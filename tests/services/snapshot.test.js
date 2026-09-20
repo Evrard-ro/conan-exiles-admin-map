@@ -99,4 +99,23 @@ describe('snapshotService', () => {
     expect(snap.data).toHaveProperty('altars')
     expect(snap.data).toHaveProperty('all')
   })
+
+  test('transformPlayers unescapes SQLite doubled single quotes', async () => {
+    const mockDb = {
+      prepare: jest.fn().mockImplementation(() => ({
+        all: jest.fn().mockReturnValue([
+          { char_name: "'Conan O''Brien'", guild_name: "'King''s Guard'", rank: "'Leader'" }
+        ])
+      })),
+      close: jest.fn()
+    }
+    Database.mockImplementation(() => mockDb)
+    mkdirSync.mockImplementation(() => {})
+    writeFileSync.mockImplementation(() => {})
+
+    await service.refresh('s1')
+    const snap = service.get('s1')
+    expect(snap.data.players[0].char_name).toBe("Conan O'Brien")
+    expect(snap.data.players[0].guild_name).toBe("King's Guard")
+  })
 })

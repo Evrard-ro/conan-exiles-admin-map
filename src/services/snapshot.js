@@ -54,9 +54,9 @@ function addKind(rows) {
 function transformPlayers(rows) {
   return rows.map(p => {
     const player = { ...p }
-    if (player.char_name) player.char_name = player.char_name.slice(1, -1)
+    if (player.char_name) player.char_name = player.char_name.slice(1, -1).replace(/''/g, "'")
     if (!player.guild_name || player.guild_name === 'NULL') player.guild_name = ''
-    else player.guild_name = player.guild_name.slice(1, -1)
+    else player.guild_name = player.guild_name.slice(1, -1).replace(/''/g, "'")
     if (!player.rank || player.rank === 'NULL') player.rank = ''
     return player
   })
@@ -151,32 +151,57 @@ export function createSnapshotService(servers) {
     _snapshots.set(serverId, { ...existing, refreshing: true })
 
     try {
-      const db = new Database(serverCfg.database, { readonly: true })
+      const db = new Database(serverCfg.database, { readonly: true, timeout: 5000 })
       const run = sql => db.prepare(sql).all()
+      const yieldLoop = () => new Promise(resolve => setImmediate(resolve))
       let data
       try {
+        const all = addKind(run(queries.all))
+        await yieldLoop()
+        const altars = addKind(run(queries.altars))
+        await yieldLoop()
+        const animalpens = addKind(run(queries.animalpens))
+        await yieldLoop()
+        const beds = addKind(run(queries.beds))
+        await yieldLoop()
+        const buildings = addKind(run(queries.buildings))
+        await yieldLoop()
+        const campfires = addKind(run(queries.campfires))
+        await yieldLoop()
+        const chests = addKind(run(queries.chests))
+        await yieldLoop()
+        const crabPots = addKind(run(queries.crabPots))
+        await yieldLoop()
+        const crafting = addKind(run(queries.crafting))
+        await yieldLoop()
+        const fishNets = addKind(run(queries.fishNets))
+        await yieldLoop()
+        const mapRooms = addKind(run(queries.mapRooms))
+        await yieldLoop()
+        const thrones = addKind(run(queries.thrones))
+        await yieldLoop()
+        const trebuchets = addKind(run(queries.trebuchets))
+        await yieldLoop()
+        const vaults = addKind(run(queries.vaults))
+        await yieldLoop()
+        const waterWells = addKind(run(queries.waterWells))
+        await yieldLoop()
+        const wheelsOfPain = addKind(run(queries.wheelsOfPain))
+        await yieldLoop()
+        const pippiAll = addKind(run(queries.pippiAll))
+        await yieldLoop()
+        const players = transformPlayers(run(queries.players))
+        await yieldLoop()
+        const pets = transformPets(run(queries.pets))
+        await yieldLoop()
+        const thralls = transformThralls(run(queries.thralls))
+        await yieldLoop()
+        const pippiThespians = transformPippiThespians(run(queries.pippiThespians))
+
         data = {
-          all:            addKind(run(queries.all)),
-          altars:         addKind(run(queries.altars)),
-          animalpens:     addKind(run(queries.animalpens)),
-          beds:           addKind(run(queries.beds)),
-          buildings:      addKind(run(queries.buildings)),
-          campfires:      addKind(run(queries.campfires)),
-          chests:         addKind(run(queries.chests)),
-          crabPots:       addKind(run(queries.crabPots)),
-          crafting:       addKind(run(queries.crafting)),
-          fishNets:       addKind(run(queries.fishNets)),
-          mapRooms:       addKind(run(queries.mapRooms)),
-          thrones:        addKind(run(queries.thrones)),
-          trebuchets:     addKind(run(queries.trebuchets)),
-          vaults:         addKind(run(queries.vaults)),
-          waterWells:     addKind(run(queries.waterWells)),
-          wheelsOfPain:   addKind(run(queries.wheelsOfPain)),
-          pippiAll:       addKind(run(queries.pippiAll)),
-          players:        transformPlayers(run(queries.players)),
-          pets:           transformPets(run(queries.pets)),
-          thralls:        transformThralls(run(queries.thralls)),
-          pippiThespians: transformPippiThespians(run(queries.pippiThespians)),
+          all, altars, animalpens, beds, buildings, campfires, chests,
+          crabPots, crafting, fishNets, mapRooms, thrones, trebuchets,
+          vaults, waterWells, wheelsOfPain, pippiAll, players, pets, thralls, pippiThespians
         }
       } finally {
         db.close()

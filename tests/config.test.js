@@ -64,6 +64,15 @@ multi = pass:s1,s2
     expect(cfg.users.get('multi').servers).toEqual(['s1', 's2'])
   })
 
+  test('normalizes wildcard server permission if mixed with servers', () => {
+    const raw = `
+[USERS]
+mixed = pass:s1,*
+`
+    const cfg = parseConfig(raw)
+    expect(cfg.users.get('mixed').servers).toEqual(['*'])
+  })
+
   test('returns defaults when SETTINGS section is absent', () => {
     const raw = `[SERVER_s1]\ndatabase = /db.db`
     const cfg = parseConfig(raw)

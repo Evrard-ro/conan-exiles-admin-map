@@ -45,4 +45,10 @@ describe('createServerAccessMiddleware', () => {
     mw(req, res, next)
     expect(next).toHaveBeenCalled()
   })
+
+  test('allows access when wildcard is not first element', () => {
+    const { req, res, next } = makeReqRes('s2', ['s1', '*'])
+    mw(req, res, next)
+    expect(next).toHaveBeenCalled()
+  })
 })

@@ -63,6 +63,7 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
 function convertRange( value, r1, r2 ) {
@@ -132,8 +133,9 @@ function timeSince (date) {
 function selectServer (serverId) {
   activeServerId = serverId
   closePanel()
-  getPlayers()
-  showAll()
+  getPlayers().always(function () {
+    showAll()
+  })
 }
 
 function refreshServer (serverId) {
@@ -143,8 +145,9 @@ function refreshServer (serverId) {
     success: function (data) {
       toastr.success('Server data updated')
       if (serverId === activeServerId) {
-        getPlayers()
-        showAll()
+        getPlayers().always(function () {
+          showAll()
+        })
       }
       $.getJSON('api/servers', function (servers) { renderServersList(servers) })
     },
@@ -183,13 +186,9 @@ function init() {
   tileLayer = L.tileLayer(mapConfigs[activeMap].tiles, {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
-    minNativeZoom: mapMaxZoom,
-    maxNativeZoom: mapMaxZoom,
     bounds: mapBounds,
     tms: false,
-    updateWhenIdle: true,
-    keepBuffer: 0,
-    updateWhenZooming: false
+    keepBuffer: 2
   }).addTo(map)
 
   // Sidebar panel toggles
@@ -311,13 +310,9 @@ function switchMap(name) {
   tileLayer = L.tileLayer(mapConfigs[name].tiles, {
     minZoom: mapMinZoom,
     maxZoom: mapMaxZoom,
-    minNativeZoom: mapMaxZoom,
-    maxNativeZoom: mapMaxZoom,
     bounds: mapBounds,
     tms: false,
-    updateWhenIdle: true,
-    keepBuffer: 0,
-    updateWhenZooming: false
+    keepBuffer: 2
   }).addTo(map)
 
   map.setView(mapBounds.getCenter(), 2)
@@ -602,14 +597,33 @@ function resetFilters () {
   drawData()
 }
 
-function onClick (point) {
+function fallbackCopy (text) {
   var input = document.createElement('textarea')
+  input.value = text
+  input.style.position = 'fixed'
+  input.style.opacity = '0'
   document.body.appendChild(input)
-  input.value = point.target.options.teleport
   input.select()
-  document.execCommand('copy')
+  try {
+    document.execCommand('copy')
+    toastr.success(language.phrases['ui.teleport_copied'])
+  } catch (e) {
+    toastr.error('Failed to copy teleport command')
+  }
   input.remove()
-  toastr.success(language.phrases['ui.teleport_copied'])
+}
+
+function onClick (point) {
+  var text = point.target.options.teleport
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () {
+      toastr.success(language.phrases['ui.teleport_copied'])
+    }).catch(function () {
+      fallbackCopy(text)
+    })
+  } else {
+    fallbackCopy(text)
+  }
 }
 
 function createMarker(marker, group) {
@@ -1022,13 +1036,13 @@ function performSearch (query) {
 }
 
 function getPlayers () {
-  if (!activeServerId) return
-  $.getJSON('api/' + activeServerId + '/players', function (data) {
-    playersData = data.data
+  if (!activeServerId) return $.Deferred().resolve().promise()
+  return $.getJSON('api/' + activeServerId + '/players', function (data) {
+    playersData = data.data || []
     playerLastOnline = {}
     guildLastOnline = {}
 
-    data.data.forEach(function (player) {
+    playersData.forEach(function (player) {
       if (!player.last_online) return
       var ts = new Date(player.last_online.replace(' ', 'T') + 'Z').getTime()
       if (isNaN(ts)) return

@@ -52,7 +52,8 @@ export function parseConfig(rawIni) {
         const password = str.slice(0, colonIdx)
         const serverList = str.slice(colonIdx + 1)
         const srvs = serverList === '*' ? ['*'] : serverList.split(',').map(s => s.trim()).filter(Boolean)
-        users.set(username, { password, servers: srvs })
+        const finalServers = srvs.includes('*') ? ['*'] : srvs
+        users.set(username, { password, servers: finalServers })
       }
     }
   }

@@ -8,7 +8,7 @@ export function createServerAccessMiddleware(servers) {
     }
 
     const user = res.locals.user
-    if (user && user.servers[0] !== '*' && !user.servers.includes(serverId)) {
+    if (user && !user.servers.includes('*') && !user.servers.includes(serverId)) {
       return res.status(403).json({ error: 'Access denied' })
     }
 

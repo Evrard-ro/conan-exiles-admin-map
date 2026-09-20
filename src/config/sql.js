@@ -1,4 +1,4 @@
-module.exports = {
+const queries = {
   all: `
     select ap.class, ap.x, ap.y, ap.z, g.name as guild_name, g.guildid as guild_id, c.char_name, c.id as char_id, b.owner_id from buildings as b
     left outer join actor_position as ap on b.object_id = ap.id
@@ -120,6 +120,7 @@ module.exports = {
     left outer join properties as petowner on petowner.object_id = ap.id and petowner.name like '%owner%'
     where ap.class like '%wildlife%pet%'
     or ap.class like '%pict_wildlife%'
+    or ap.class like '%Mount%'
   `,
   thralls: `
     select ap.class, ap.x, ap.y, ap.z, thrallname.value as name, thrallinfo.value as info, thrallowner.value as owner
@@ -127,7 +128,8 @@ module.exports = {
     left outer join properties as thrallname on thrallname.object_id = ap.id and thrallname.name like '%ThrallName'
     left outer join properties as thrallinfo on thrallinfo.object_id = ap.id and thrallinfo.name like '%ThrallInfo'
     left outer join properties as thrallowner on thrallowner.object_id = ap.id and thrallowner.name like '%OwnerUniqueID'
-    where ap.class like '%PersistentHumanoidNPC%'
+    where (ap.class like '%PersistentHumanoidNPC%'
+    or ap.class like '%EntertainerHumanoidNPC%')
   `,
   pippiThespians: `
     select ap.class, ap.x, ap.y, ap.z, pippi.value as buffer
@@ -146,12 +148,12 @@ module.exports = {
   players: `
     select quote(g.name) as guild_name, quote(g.guildid) as guild_id, quote(c.char_name) as char_name,
     case c.rank WHEN '3' then 'Guild master' WHEN '2' then 'Officer' WHEN '1' then 'Member' WHEN '0' then 'Recruit' ELSE c.rank END rank,
-    c.level as level, c.playerid as steam_id, quote(c.id) as char_id, ap.x as x, ap.y as y, ap.z as z,
+    c.level as level, coalesce(acc.platformId, c.playerId) as steam_id, quote(c.id) as char_id, ap.x as x, ap.y as y, ap.z as z,
     acc.online as online,
     datetime(c.lastTimeOnline, 'unixepoch') as last_online from characters as c
     left outer join guilds as g on g.guildid = c.guild
     left outer join actor_position as ap on ap.id = c.id
-    left outer join account as acc on acc.user = c.playerId
+    left outer join account as acc on (acc.id = c.playerId or acc.user = c.playerId)
     order by last_online desc
   `,
   thrones: `
@@ -195,3 +197,5 @@ module.exports = {
     and ap.class like '%wheelofpain%'
   `,
 }
+
+export default queries

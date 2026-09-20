@@ -19,11 +19,13 @@ if (-not $?) { throw "Babel transpile failed" }
 Copy-Item -Recurse src\views lib\views
 
 # Bundle to .exe
-npx pkg lib\conan-exiles-admin-map.js -t latest-win-x64 --out-path build -c package.json
+npx --yes @yao-pkg/pkg lib\conan-exiles-admin-map.js -t node24-win-x64 --out-path build -c package.json
 if (-not $?) { throw "pkg bundling failed" }
 
-# Rename exe
-Rename-Item build\conan-exiles-admin-map-win.exe build\conan-exiles-admin-map.exe
+# Rename exe if necessary
+if (Test-Path build\conan-exiles-admin-map-win.exe) {
+    Rename-Item build\conan-exiles-admin-map-win.exe build\conan-exiles-admin-map.exe
+}
 
 # Copy runtime files
 Copy-Item src\conan-exiles-admin-map.ini build\

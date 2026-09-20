@@ -3,9 +3,15 @@ import express from 'express'
 
 const staticMiddleware = (app) => {
   const root = join(app.get('rootFolder'), 'public/assets')
-  app.use('/assets/tiles', express.static(join(root, 'tiles'), { maxAge: '365d' }))
-  app.use('/assets/tiles-siptah', express.static(join(root, 'tiles-siptah'), { maxAge: '365d' }))
-  app.use('/assets', express.static(root))
+  const tileOptions = {
+    maxAge: '365d',
+    immutable: true,
+    etag: false,
+    lastModified: false
+  }
+  app.use('/assets/tiles', express.static(join(root, 'tiles'), tileOptions))
+  app.use('/assets/tiles-siptah', express.static(join(root, 'tiles-siptah'), tileOptions))
+  app.use('/assets', express.static(root, { maxAge: '1d' }))
 }
 
 export default staticMiddleware

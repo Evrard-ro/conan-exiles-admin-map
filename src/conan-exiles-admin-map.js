@@ -15,11 +15,20 @@ routes(app)
 
 const port = app.get('port')
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`App listening on port ${port}`)
   const url = `http://localhost:${port}/`
   openBrowser(url)
   startTray(url)
+})
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Error: Port ${port} is already in use. Please check if another instance of conan-exiles-admin-map is running, or change the port in conan-exiles-admin-map.ini.`)
+  } else {
+    console.error('Server failed to start:', err.message)
+  }
+  process.exit(1)
 })
 
 function openBrowser(url) {
