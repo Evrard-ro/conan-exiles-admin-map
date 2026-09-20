@@ -11,7 +11,7 @@ const staticMiddleware = (app) => {
   }
   app.use('/assets/tiles', express.static(join(root, 'tiles'), tileOptions))
   app.use('/assets/tiles-siptah', express.static(join(root, 'tiles-siptah'), tileOptions))
-  app.use('/assets', express.static(root, { maxAge: '1d' }))
+  app.use('/assets', express.static(root, { maxAge: 0, etag: true }))
 }
 
 export default staticMiddleware

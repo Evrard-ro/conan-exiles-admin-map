@@ -76,6 +76,11 @@ export function updateTerritories() {
     const clanId = item.guild_id || item.owner || item.char_id
     if (!clanId) return
 
+    if (!state.groupNames[clanId]) {
+      if (item.guild_name) state.groupNames[clanId] = item.guild_name
+      else if (item.char_name) state.groupNames[clanId] = item.char_name
+    }
+
     if (!clanPoints[clanId]) {
       clanPoints[clanId] = []
     }
@@ -97,6 +102,7 @@ export function updateTerritories() {
 
     const clanName = state.groupNames[clanId] || String(clanId)
     const color = state.groupColors[clanId] || colorhash.hex(clanId + clanName) || '#c8860a'
+    if (!state.groupColors[clanId]) state.groupColors[clanId] = color
 
     if (points.length >= 3) {
       const hull = computeConvexHull(points)
@@ -158,8 +164,11 @@ export function toggleTerritories(force) {
   updateTerritories()
 
   const ph = window.language?.phrases || {}
+  const clanTerritoriesLabel = ph['ui.clan_territories'] || 'Clan territories'
   const msg = state.territoriesEnabled
-    ? (ph['ui.territories_enabled'] || 'Clan territories enabled')
-    : (ph['ui.territories_disabled'] || 'Clan territories disabled')
-  toastr.info(msg)
+    ? `${clanTerritoriesLabel}: ON`
+    : `${clanTerritoriesLabel}: OFF`
+  if (window.toastr) {
+    window.toastr.info(msg)
+  }
 }

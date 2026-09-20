@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="assets/vendor/MarkerCluster.css" />
     <link rel="stylesheet" href="assets/vendor/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="assets/vendor/toastr.min.css" />
-    <link rel="stylesheet" href="assets/css/map.css" />
+    <link rel="stylesheet" href="assets/css/map.css?v=0.4.6" />
     <script>window.language = <%- language %></script>
   </head>
   <body onload="init()">
@@ -28,8 +28,8 @@
           <button class="sb-btn" data-panel="filters" title="<%= lang['ui.filters'] %>">◈</button>
           <button class="sb-btn" data-panel="search" title="<%= lang['ui.search'] %>">🔍</button>
           <button class="sb-btn" data-panel="clans" title="<%= lang['ui.clan_filter'] %>">⚑</button>
-          <button class="sb-btn" id="btn-territories" title="<%= lang['ui.clan_territories'] || 'Clan territories' %>">🏰</button>
-          <button class="sb-btn" id="btn-ruler" title="<%= lang['ui.ruler'] || 'Measure distance' %>">📏</button>
+          <button class="sb-btn" id="btn-territories" onclick="toggleTerritories(); return false;" title="<%= lang['ui.clan_territories'] || 'Clan territories' %>">🏰</button>
+          <button class="sb-btn" id="btn-ruler" onclick="toggleRuler(); return false;" title="<%= lang['ui.ruler'] || 'Measure distance' %>">📏</button>
           <button class="sb-btn" data-panel="servers" title="Servers">🖥</button>
         </div>
         <div class="sidebar-spacer"></div>
@@ -103,7 +103,7 @@
             </div>
             <div class="clan-territories-row">
               <label class="clan-territories-label">
-                <input type="checkbox" id="territories-toggle">
+                <input type="checkbox" id="territories-toggle" onchange="toggleTerritories(this.checked)">
                 <span><%= lang['ui.clan_territories'] || 'Clan territories' %></span>
               </label>
             </div>
@@ -192,6 +192,6 @@
     <script src="assets/vendor/clipboard.min.js"></script>
     <script src="assets/vendor/toastr.min.js"></script>
     <script src="assets/scripts/colorhash.js"></script>
-    <script type="module" src="assets/scripts/app.js"></script>
+    <script type="module" src="assets/scripts/app.js?v=0.4.6"></script>
   </body>
 </html>

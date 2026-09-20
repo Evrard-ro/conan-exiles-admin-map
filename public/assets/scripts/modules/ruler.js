@@ -4,6 +4,7 @@
  */
 import { state } from './state.js'
 import { fromLatLng, escapeHtml } from './utils.js'
+import { closePanel } from './panels.js'
 
 let rulerPoints = []
 let rulerMarkers = []
@@ -88,11 +89,21 @@ export function toggleRuler(force) {
   $('#map').toggleClass('ruler-cursor', state.rulerActive)
 
   if (state.rulerActive) {
+    closePanel()
     $('#ruler-hud').show()
     clearRuler()
   } else {
     $('#ruler-hud').hide()
     clearRuler()
+  }
+
+  const ph = window.language?.phrases || {}
+  const rulerLabel = ph['ui.ruler'] || 'Measure distance'
+  const msg = state.rulerActive
+    ? `${rulerLabel}: ON`
+    : `${rulerLabel}: OFF`
+  if (window.toastr) {
+    window.toastr.info(msg)
   }
 }
 
@@ -108,7 +119,8 @@ export function onRulerMapClick(e) {
     color: '#c8860a',
     fillColor: '#ffffff',
     fillOpacity: 1,
-    weight: 2
+    weight: 2,
+    interactive: false
   }).addTo(state.map)
   rulerMarkers.push(marker)
 
@@ -136,7 +148,12 @@ export function onRulerMapClick(e) {
   // Update fixed line
   const latlngs = rulerPoints.map(p => p.latlng)
   if (!rulerLine) {
-    rulerLine = L.polyline(latlngs, { color: '#c8860a', weight: 3, opacity: 0.9 }).addTo(state.map)
+    rulerLine = L.polyline(latlngs, {
+      color: '#c8860a',
+      weight: 3,
+      opacity: 0.9,
+      interactive: false
+    }).addTo(state.map)
   } else {
     rulerLine.setLatLngs(latlngs)
   }
@@ -165,7 +182,8 @@ export function onRulerMouseMove(e) {
       color: '#c8860a',
       weight: 2,
       dashArray: '5, 5',
-      opacity: 0.75
+      opacity: 0.75,
+      interactive: false
     }).addTo(state.map)
   } else {
     previewLine.setLatLngs([lastPoint.latlng, e.latlng])

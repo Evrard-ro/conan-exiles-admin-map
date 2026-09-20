@@ -18,7 +18,7 @@ export function openPanel(name) {
 
 export function closePanel() {
   $('.overlay-panel').removeClass('open')
-  $('.sb-btn:not(.map-btn)').removeClass('active')
+  $('.sb-btn[data-panel]').removeClass('active')
   $('#search-input').val('')
   $('#search-results').empty()
 }
