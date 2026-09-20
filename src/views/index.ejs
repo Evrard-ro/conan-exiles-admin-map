@@ -28,6 +28,8 @@
           <button class="sb-btn" data-panel="filters" title="<%= lang['ui.filters'] %>">◈</button>
           <button class="sb-btn" data-panel="search" title="<%= lang['ui.search'] %>">🔍</button>
           <button class="sb-btn" data-panel="clans" title="<%= lang['ui.clan_filter'] %>">⚑</button>
+          <button class="sb-btn" id="btn-territories" title="<%= lang['ui.clan_territories'] || 'Clan territories' %>">🏰</button>
+          <button class="sb-btn" id="btn-ruler" title="<%= lang['ui.ruler'] || 'Measure distance' %>">📏</button>
           <button class="sb-btn" data-panel="servers" title="Servers">🖥</button>
         </div>
         <div class="sidebar-spacer"></div>
@@ -98,6 +100,12 @@
               <button class="clan-sort-btn active" data-sort="count">By count ↓</button>
               <button class="clan-sort-btn" data-sort="name">By name</button>
               <button class="clan-sort-btn" data-sort="activity">By activity</button>
+            </div>
+            <div class="clan-territories-row">
+              <label class="clan-territories-label">
+                <input type="checkbox" id="territories-toggle">
+                <span><%= lang['ui.clan_territories'] || 'Clan territories' %></span>
+              </label>
             </div>
             <div class="clan-divider"></div>
             <div id="clan-filter-menu"></div>
@@ -172,6 +180,7 @@
         <!-- Status bar -->
         <div id="status-bar"><%= lang['ui.last_update'] %><span class="lastupdate"></span></div>
         <div id="coord-debug" style="display:none"><span id="coord-text">—</span></div>
+        <div id="ruler-hud" class="ruler-hud" style="display:none"></div>
 
       </div>
     </div>

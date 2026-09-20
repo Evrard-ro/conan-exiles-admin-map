@@ -63,5 +63,8 @@ export const state = {
   allMarkersData: [],
   markerByCoords: {},
   playerLastOnline: {},
-  guildLastOnline: {}
+  guildLastOnline: {},
+  territoriesEnabled: false,
+  territoryGroup: null,
+  rulerActive: false
 }

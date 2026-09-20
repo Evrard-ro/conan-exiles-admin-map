@@ -11,6 +11,8 @@ import {
   redrawAll
 } from './panels.js'
 import { switchMap } from './map.js'
+import { toggleTerritories } from './territories.js'
+import { toggleRuler, clearRuler, onRulerMapClick, onRulerMouseMove } from './ruler.js'
 
 export function initEvents() {
   // Sidebar panel toggles
@@ -31,14 +33,32 @@ export function initEvents() {
   })
 
   $('#map').on('click', () => {
-    closePanel()
+    if (!state.rulerActive) {
+      closePanel()
+    }
   })
 
+  // Clan territories toggles
+  $(document).on('click', '#btn-territories', () => {
+    toggleTerritories()
+  })
+
+  $(document).on('change', '#territories-toggle', function () {
+    toggleTerritories($(this).is(':checked'))
+  })
+
+  // Ruler tool button
+  $(document).on('click', '#btn-ruler', () => {
+    toggleRuler()
+  })
+
+  // Inactive days filter
   $('#inactive-days').on('input', function () {
     state.inactiveDays = parseInt($(this).val(), 10) || 0
     redrawAll()
   })
 
+  // Cluster toggle
   $('#cluster-toggle').on('change', function () {
     state.clusterEnabled = $(this).is(':checked')
     redrawAll()
@@ -100,10 +120,16 @@ export function initEvents() {
     }
   })
 
+  // Ruler clicks and move on map
+  state.map.on('click', onRulerMapClick)
+
   state.map.on('mousemove', function (e) {
     if ($('#coord-debug').is(':visible')) {
       const c = fromLatLng(e.latlng.lat, e.latlng.lng)
       $('#coord-text').text(`TeleportPlayer ${c.x} ${c.y} 0`)
+    }
+    if (state.rulerActive) {
+      onRulerMouseMove(e)
     }
   })
 
@@ -114,10 +140,19 @@ export function initEvents() {
       setTimeout(() => $('#search-input').focus(), 50)
     }
     if (e.key === 'Escape') {
+      if (state.rulerActive) {
+        toggleRuler(false)
+      }
       closePanel()
     }
     if (e.shiftKey && e.code === 'KeyC') {
       $('#coord-debug').toggle()
+    }
+    if (e.shiftKey && (e.code === 'KeyM' || e.key === 'M' || e.key === 'm')) {
+      toggleRuler()
+    }
+    if (e.shiftKey && (e.code === 'KeyT' || e.key === 'T' || e.key === 't')) {
+      toggleTerritories()
     }
   }, true)
 }

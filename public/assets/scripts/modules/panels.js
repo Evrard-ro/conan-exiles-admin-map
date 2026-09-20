@@ -3,6 +3,7 @@ import { escapeHtml, toLatLng, isOnActiveMap } from './utils.js'
 import { parseThrallInfo, tierBadgeClass, getOwnerById } from './tooltips.js'
 import { pulseMarker } from './markers.js'
 import { drawData } from './api.js'
+import { updateTerritories } from './territories.js'
 
 export function openPanel(name) {
   const $btn = $(`.sb-btn[data-panel="${name}"]`)
@@ -165,6 +166,7 @@ export function selectClanFilter(id) {
   state.clanFilter = id
   rebuildClanFilterMenu()
   applyClanFilter()
+  updateTerritories()
 }
 
 export function applyClanFilter() {
@@ -346,9 +348,13 @@ export function resetFilters() {
   state.clanFilter = 'all'
   state.inactiveDays = 0
   state.clusterEnabled = false
+  state.territoriesEnabled = false
   $('.filter-item').removeClass('active')
   $('#inactive-days').val('')
   $('#cluster-toggle').prop('checked', false)
+  $('#territories-toggle').prop('checked', false)
+  $('#btn-territories').removeClass('active')
   $('#clan-filter-search').val('')
+  updateTerritories()
   drawData()
 }

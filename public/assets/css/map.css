@@ -635,3 +635,137 @@ html, body {
   color: #d4b896;
 }
 .server-refresh-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── Clan territories ── */
+.clan-territories-row {
+  padding: 8px 12px;
+  background: rgba(200, 134, 10, 0.05);
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+  margin-top: 6px;
+}
+
+.clan-territories-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--accent);
+  cursor: pointer;
+  user-select: none;
+  letter-spacing: 0.5px;
+}
+
+.clan-territories-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+/* ── Ruler mode and HUD ── */
+#map.ruler-cursor {
+  cursor: crosshair !important;
+}
+
+.ruler-hud {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 10, 3, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 18px;
+  color: var(--text);
+  z-index: 500;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  min-width: 280px;
+  text-align: center;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.ruler-hud-title {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.ruler-hud-f {
+  font-size: 12px;
+  color: #e8c87a;
+  font-weight: normal;
+}
+
+.ruler-hud-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.ruler-hud-seg {
+  color: #a8d5e5;
+  margin-right: 6px;
+}
+
+.ruler-hud-uu {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.ruler-hud-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ruler-hud-btn {
+  background: rgba(200, 134, 10, 0.15);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  padding: 3px 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ruler-hud-btn:hover {
+  background: rgba(200, 134, 10, 0.35);
+  color: #fff;
+}
+
+.ruler-hud-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.ruler-hud-close:hover {
+  color: var(--accent);
+}
+
+.ruler-segment-label {
+  background: rgba(17, 10, 3, 0.88);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: #e8c87a;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  pointer-events: none;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}

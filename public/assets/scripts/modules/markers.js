@@ -2,6 +2,7 @@ import { state, circleMarkerOptions, tooltipOptions, colorhash } from './state.j
 import { toLatLng, isOnActiveMap, copyTeleport } from './utils.js'
 import { getTooltipContent, makeClusterIcon, clusterTooltipHtml, getOwnerById } from './tooltips.js'
 import { applyClanFilter, rebuildClanFilterMenu } from './panels.js'
+import { updateTerritories } from './territories.js'
 
 export function clearAllLayers() {
   state.markerByCoords = {}
@@ -178,4 +179,5 @@ export function renderMarkers(markers) {
 
   applyClanFilter()
   rebuildClanFilterMenu()
+  updateTerritories()
 }

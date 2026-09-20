@@ -49,7 +49,12 @@ export default {
   "reset_filters": "Restablecer filtros",
   "clan_filter": "Filtro de clan",
   "all_clans": "Todos los clanes",
-  "search": "Buscar",
+  "clan_territories": "Territorios de clanes",
+  "ruler": "Medir distancia (Regla)",
+  "ruler_hint": "Haz clic en el mapa para medir distancia. ESC o doble clic para limpiar.",
+  "foundations": "cimientos",
+  "units": "unidades",
+  "total_distance": "Distancia total",
 
   "close": "Cerrar"
 }
